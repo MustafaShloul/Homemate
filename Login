@@ -1,0 +1,81 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(Homemate());
+}
+
+class Homemate extends StatelessWidget {
+  const Homemate({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text('Login')),
+        backgroundColor: const Color.fromARGB(255, 130, 91, 91),
+        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          CircleAvatar(
+            radius: 56,
+            backgroundColor: const Color.fromARGB(255, 154, 94, 34),
+            child: Padding(
+                padding: const EdgeInsets.all(8), // Border radius
+                child: ClipOval(child: Image.asset('images/Logo.png'))),
+          ),
+          Text(
+            'Homemate',
+            style: TextStyle(
+                color: Colors.black, fontSize: 25, fontFamily: 'Pacifico'),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8), color: Colors.white),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.phone,
+                    size: 32,
+                    color: Color.fromARGB(255, 130, 91, 91),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 14),
+                    child: Text(
+                      'Enter Your Email',
+                      style: TextStyle(fontSize: 22),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8), color: Colors.white),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.password,
+                    size: 32,
+                    color: Color.fromARGB(255, 130, 91, 91),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 14),
+                    child: Text(
+                      'Enter Your Password',
+                      style: TextStyle(fontSize: 22),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+}
