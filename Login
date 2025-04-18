@@ -1,90 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  runApp(Homemate());
-}
-
-class Homemate extends StatelessWidget {
-  const Homemate({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text('Login'), backgroundColor: Colors.brown),
-        floatingActionButton: FloatingActionButton(
-            onPressed: () {}, backgroundColor: Colors.deepOrange),
-        backgroundColor: const Color.fromARGB(255, 130, 91, 91),
-        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CircleAvatar(
-            radius: 56,
-            backgroundColor: const Color.fromARGB(255, 154, 94, 34),
-            child: Padding(
-                padding: const EdgeInsets.all(8), // Border radius
-                child: ClipOval(child: Image.asset('images/Logo.png'))),
-          ),
-          Text(
-            'Homemate',
-            style: TextStyle(
-                color: Colors.black, fontSize: 25, fontFamily: 'Pacifico'),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8), color: Colors.white),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.phone,
-                    size: 32,
-                    color: Color.fromARGB(255, 130, 91, 91),
+    return Scaffold(
+      backgroundColor: Colors.grey,
+
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset('images/Logo.png', height: 180),
+              SizedBox(height: 20),
+              Text(
+                'SIGN IN',
+                style: GoogleFonts.robotoCondensed(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Welcome to see you again !',
+                style: GoogleFonts.robotoCondensed(fontSize: 18),
+              ),
+              SizedBox(height: 50),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 14),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Email',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: TextField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Password',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.amber[900],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
                     child: Text(
-                      'Enter Your Email',
-                      style: TextStyle(fontSize: 22),
+                      'Sign in',
+                      style: GoogleFonts.robotoCondensed(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Not yet a member ?',
+                    style: GoogleFonts.robotoCondensed(color: Colors.black),
+                  ),
+                  Text(
+                    'Sign up now',
+                    style: GoogleFonts.robotoCondensed(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
               ),
-            ),
+            ],
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8), color: Colors.white),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.password,
-                    size: 32,
-                    color: Color.fromARGB(255, 130, 91, 91),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 14),
-                    child: Text(
-                      'Enter Your Password',
-                      style: TextStyle(fontSize: 22),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(0.8),
-            child: Text(
-              'Forget Password',
-              style: TextStyle(
-                  color: Colors.black, fontSize: 14, fontFamily: 'Pacifico'),
-            ),
-          ),
-        ]),
+        ),
       ),
     );
   }
