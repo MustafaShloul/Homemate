@@ -1,0 +1,29 @@
+import './models/category.dart';
+// import './models/trip.dart';
+
+const Categories_data = [
+  Category(
+    id: 'c1',
+    title: 'Cleaning',
+    imageUrl:
+        'https://plus.unsplash.com/premium_photo-1683121328013-f9efabdabde5?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  ),
+  Category(
+    id: 'c2',
+    title: 'Moving',
+    imageUrl:
+        'https://media.istockphoto.com/id/1460990606/photo/truck-car-moving-house-for-customers-delivering-boxes-and-furniture-vehicle-transportation.jpg?s=612x612&w=0&k=20&c=WxnH3iAWRCQNCeqLUHuKit03cN6UQNsU2ayQsxSShks=',
+  ),
+  Category(
+    id: 'c3',
+    title: ' Gardening',
+    imageUrl:
+        'https://media.istockphoto.com/id/2133305270/photo/landscapers-working-with-lawn-equipment.jpg?s=612x612&w=0&k=20&c=bKPFs3JrKkzsvA-7U-q3_D9Qm1qK2gvLlpAObYXeitE=',
+  ),
+  Category(
+    id: 'c4',
+    title: 'Fixing ',
+    imageUrl:
+        'https://media.istockphoto.com/id/2140183630/photo/repairman-using-a-screwdriver-disassembles-a-washing-machine-for-repair.jpg?s=612x612&w=0&k=20&c=vpLsKVsKm8LEUIBknDNzyrB8jQQHVL2Ib8oG72ymazM=',
+  ),
+];
