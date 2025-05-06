@@ -1,0 +1,62 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:homemate/category_item.dart';
+import '../app_data.dart';
+
+class CategorieScreen extends StatelessWidget {
+  const CategorieScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Services')),
+      body: GridView(
+        padding: EdgeInsets.all(10),
+        // هاي انه كم عنصر بقدر اظهر على الشاشة بناءا على عرض الشاشة
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 200,
+
+          // وهاي بتحدد عرض وارتفاع كل عنصر
+          childAspectRatio: 7 / 8,
+          // فراغات بين العناصر بشكل افقي
+          mainAxisSpacing: 10,
+          // فراغات بشكل عمودي
+          crossAxisSpacing: 10,
+        ),
+        children:
+            Categories_data.map(
+              (categoryData) =>
+                  CategoryItem(categoryData.title, categoryData.imageUrl),
+            ).toList(),
+      ),
+    );
+  }
+}
+
+class Category_scr extends StatefulWidget {
+  const Category_scr({super.key});
+
+  @override
+  State<Category_scr> createState() => _Category_scrState();
+}
+
+class _Category_scrState extends State<Category_scr> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            MaterialButton(
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+              },
+              color: Colors.amber[900],
+              child: Text('sign out'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
