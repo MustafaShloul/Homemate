@@ -1,0 +1,24 @@
+enum ServiceType { Cleaning, Moving, Gardening, Fixing }
+
+class Service {
+  final String id;
+  final String name;
+  final String phone;
+  final List<String> categories;
+  final String title;
+  final String image;
+  final List<String> activities;
+  final ServiceType serviceType;
+
+  const Service({
+    required this.id,
+    required this.name,
+    required this.phone,
+    required this.categories,
+    required this.title,
+    required this.image,
+    required this.activities,
+    required this.serviceType,
+    required List<String> activites,
+  });
+}
