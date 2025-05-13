@@ -1,29 +1,72 @@
+// import 'package:flutter/widgets.dart';
+
 import './models/category.dart';
-// import './models/trip.dart';
+import './models/service.dart';
+
+// var Categories_data = [
+//   Category(id: 'c1', title: 'Cleaning', image: Image.asset('images/C1.png')),
+
+//   Category(id: 'c2', title: 'Moving', image: Image.asset('images/C2.png')),
+
+//   Category(id: 'c3', title: ' Gardening', image: Image.asset('images/C3.png')),
+//   Category(id: 'c4', title: 'Fixing ', image: Image.asset('images/C4.png')),
+// ];
 
 const Categories_data = [
-  Category(
-    id: 'c1',
-    title: 'Cleaning',
-    imageUrl:
-        'https://plus.unsplash.com/premium_photo-1683121328013-f9efabdabde5?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  Category(id: 'C1', title: 'تنظيف', image: 'images/C1.png'),
+  Category(id: 'C2', title: 'نقل', image: 'images/C2.png'),
+  Category(id: 'C3', title: 'حديقة', image: 'images/C3.png'),
+  Category(id: 'C4', title: 'صيانة ', image: 'images/C4.png'),
+];
+
+var Servicse_data = [
+  Service(
+    id: 'S1',
+    name: 'Ahmad',
+    phone: '0772100200',
+
+    categories: ['C1'],
+    title: 'تنظيف شامل',
+
+    serviceType: ServiceType.Cleaning,
+    image: 'images/S1.jpg',
+    activities: ['تنظيف شامل للمرافق ', 'تنظيف وغسيل للسجاد'],
+    activites: ['تنظيف شامل للمرافق ', 'تنظيف وغسيل للسجاد'],
   ),
-  Category(
-    id: 'c2',
-    title: 'Moving',
-    imageUrl:
-        'https://media.istockphoto.com/id/1460990606/photo/truck-car-moving-house-for-customers-delivering-boxes-and-furniture-vehicle-transportation.jpg?s=612x612&w=0&k=20&c=WxnH3iAWRCQNCeqLUHuKit03cN6UQNsU2ayQsxSShks=',
+
+  Service(
+    id: 'S2',
+    name: 'Mustafa',
+    phone: '0795554268',
+    categories: ['C2'],
+    title: ' نقل أثاث',
+    serviceType: ServiceType.Moving,
+    image: 'images/S2.jpg',
+    activities: ['نقل زجاج', 'فك وترحيل أثاث'],
+    activites: ['نقل زجاج', 'فك وترحيل أثاث'],
   ),
-  Category(
-    id: 'c3',
-    title: ' Gardening',
-    imageUrl:
-        'https://media.istockphoto.com/id/2133305270/photo/landscapers-working-with-lawn-equipment.jpg?s=612x612&w=0&k=20&c=bKPFs3JrKkzsvA-7U-q3_D9Qm1qK2gvLlpAObYXeitE=',
+
+  Service(
+    id: 'S3',
+    name: 'Saif',
+    phone: '0784594268',
+    categories: ['C3'],
+    title: ' حديقة',
+    serviceType: ServiceType.Gardening,
+    image: 'images/S3.jpg',
+    activites: ['قص الأعشاب والشجر', 'تسميد الأشجار ', 'ري المزروعات'],
+    activities: ['قص الأعشاب والشجر', 'تسميد الأشجار ', 'ري المزروعات'],
   ),
-  Category(
-    id: 'c4',
-    title: 'Fixing ',
-    imageUrl:
-        'https://media.istockphoto.com/id/2140183630/photo/repairman-using-a-screwdriver-disassembles-a-washing-machine-for-repair.jpg?s=612x612&w=0&k=20&c=vpLsKVsKm8LEUIBknDNzyrB8jQQHVL2Ib8oG72ymazM=',
+
+  Service(
+    id: 'S4',
+    name: 'Taqi',
+    phone: '0771546869',
+    categories: ['C4'],
+    title: ' صيانة عامة',
+    serviceType: ServiceType.Fixing,
+    image: 'images/S4.jpg',
+    activities: ['صيانة كهربائيات المنزل', 'صيانة للمرافق'],
+    activites: ['صيانة كهربائيات المنزل', 'صيانة للمرافق'],
   ),
 ];
