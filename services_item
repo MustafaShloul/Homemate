@@ -1,0 +1,110 @@
+import 'package:flutter/material.dart';
+import '../screens/service_detail_screen.dart';
+
+class ServicesItem extends StatelessWidget {
+  final String id;
+  final String title;
+  final String image;
+  final ServiceType;
+  final String phone;
+  final String name;
+
+  const ServicesItem({
+    super.key,
+    required this.id,
+    required this.title,
+    required this.image,
+    required this.ServiceType,
+    required this.name,
+    required this.phone,
+  });
+  void selectService(BuildContext context) {
+    Navigator.of(
+      context,
+    ).pushNamed(ServicesDetailScreen.screenRoute, arguments: id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //inkwell : بستخدمها عشان يلي بكون داخلها يصير قابل للضغط
+    return InkWell(
+      onTap: () => selectService(context),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        // هون بتتحكم بدرجة الظل خلف البطاقة
+        elevation: 7,
+
+        // هاي بتتحكم بالمسافة الخارجية للبطاقة
+        margin: EdgeInsets.all(10),
+        child: Column(
+          children: [
+            // بتساعدني ارتب الاشياء فوق بعض
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                  ),
+                  child: Image.asset(
+                    image,
+                    height: 250,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Container(
+                  height: 250,
+                  //عشان احدد مكان ال child
+                  alignment: Alignment.bottomRight,
+                  //بحط مسافات داخلية عشان ابعد النص عن الاطراف
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  decoration: BoxDecoration(
+                    //بتحكم بدرجة شفافية اللون
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withOpacity(0),
+                        Colors.black.withOpacity(0.8),
+                      ],
+                    ),
+                  ),
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    overflow: TextOverflow.fade,
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.person, color: Colors.amber),
+                      Text(
+                        name,
+                        style: TextStyle(fontFamily: 'ElMessiri', fontSize: 20),
+                      ),
+
+                      SizedBox(width: 20),
+
+                      Icon(Icons.phone, color: Colors.amber),
+                      Text(
+                        phone,
+                        style: TextStyle(fontFamily: 'ElMessiri', fontSize: 20),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
