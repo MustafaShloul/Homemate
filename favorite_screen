@@ -1,0 +1,30 @@
+import 'package:flutter/material.dart';
+import 'package:homemate/models/service.dart';
+import '../screens/services_item.dart';
+
+class FavoriteScreen extends StatelessWidget {
+  // const FavoriteScreen(List<Service> favoriteServices, {super.key});
+  final List<Service> favoriteServices;
+  const FavoriteScreen(this.favoriteServices, {super.key});
+  @override
+  Widget build(BuildContext context) {
+    if (favoriteServices.isEmpty) {
+      return Center(child: Text(' ليس لديك أي خدمة  في قائمة المفضلة'));
+    } else {
+      return ListView.builder(
+        itemBuilder: (context, index) {
+          return ServicesItem(
+            id: favoriteServices[index].id,
+            title: favoriteServices[index].title,
+            image: favoriteServices[index].image,
+            ServiceType: favoriteServices[index].serviceType,
+            name: favoriteServices[index].name,
+            phone: favoriteServices[index].phone,
+            location: favoriteServices[index].location,
+          );
+        },
+        itemCount: favoriteServices.length, // تم التغيير هنا
+      );
+    }
+  }
+}
