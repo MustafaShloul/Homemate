@@ -1,0 +1,124 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class AdminScreen extends StatefulWidget {
+  const AdminScreen({super.key});
+
+  @override
+  State<AdminScreen> createState() => _AdminScreenState();
+}
+
+class _AdminScreenState extends State<AdminScreen> {
+  Offset _offset = Offset.zero;
+  bool _isRPressed = false;
+
+  void _handleKeyEvent(RawKeyEvent event) {
+    if (event.logicalKey == LogicalKeyboardKey.keyR) {
+      setState(() {
+        _isRPressed = event is RawKeyDownEvent;
+      });
+    }
+  }
+
+  void _logout() {
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
+  void _generateReport() {
+    // Implement report generation
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Report Generated'),
+            content: const Text('Service report generated successfully.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RawKeyboardListener(
+      focusNode: FocusNode(),
+      onKey: _handleKeyEvent,
+      child: GestureDetector(
+        onPanUpdate: (details) {
+          if (_isRPressed) {
+            setState(() {
+              _offset += details.delta;
+            });
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(title: const Text('Admin Dashboard')),
+          body: Stack(
+            children: [
+              Transform.translate(
+                offset: _offset,
+                child: const Center(
+                  child: Text('Canvas Content (Hold R to move)'),
+                ),
+              ),
+              Positioned(
+                right: 20,
+                top: 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            /* Accept logic */
+                          },
+                          child: const Text('Accept'),
+                        ),
+                        const SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: () {
+                            /* Reject logic */
+                          },
+                          child: const Text('Reject'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: _generateReport,
+                      child: const Text(
+                        'Generate Report\n(all services & providers)',
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        /* Show services logic */
+                      },
+                      child: const Text('Show all services'),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: _generateReport,
+                      child: const Text('Generate Report'),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: _logout,
+                      child: const Text('Logout'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
