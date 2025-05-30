@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:homemate/screens/category_services_screen.dart';
 
@@ -41,15 +41,15 @@ class CategoryItem extends StatelessWidget {
               overflow: TextOverflow.fade,
             ),
           ),
-          Container(
-            child: MaterialButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-              },
-              color: Colors.amber[900],
-              child: Text('sign out'),
-            ),
-          ),
+          // Container(
+          //   child: MaterialButton(
+          //     onPressed: () {
+          //       FirebaseAuth.instance.signOut();
+          //     },
+          //     color: Colors.amber[900],
+          //     child: Text('sign out'),
+          //   ),
+          // ),
         ],
       ),
     );
