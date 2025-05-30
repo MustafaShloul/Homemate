@@ -1,49 +1,123 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:homemate/auth.dart';
-import 'package:homemate/screens/categorie_screen.dart';
-import 'package:homemate/login_screen.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:homemate/screens/category_services_screen.dart';
-import './screens/service_detail_screen.dart';
-import 'package:homemate/signup_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:homemate/auth/signup_screen.dart';
+// import 'package:homemate/app_data.dart';
+import 'package:homemate/auth.dart';
+import 'package:homemate/screens/Admin_screen.dart';
+import 'package:homemate/screens/add_service.dart';
+import 'package:homemate/screens/categorie_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:homemate/auth/login_screen.dart';
+import 'package:homemate/screens/category_services_screen.dart';
+import 'package:homemate/services/service_service.dart';
+import './screens/filters_screen.dart';
+import 'package:homemate/screens/welcome_screen.dart';
+import 'package:homemate/screens/tabs_screen.dart';
+import 'screens/category_detail_screen.dart';
+import './models/service.dart';
 
-//show SignupScreen;
-
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Map<String, bool> filters = {'Irbid': false, 'Amman': false, 'Aqaba': false};
+  List<Service> availableServices = [];
+  final List<Service> favoriteServices = [];
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      if (user == null) {
+        print('User is currently signed out!');
+      } else {
+        print('User is signed in!');
+      }
+    });
+
+    _loadServices(); // initialize services on start
+  }
+
+  Future<void> _loadServices() async {
+    final allServices = await ServiceService().getServices();
+    setState(() {
+      availableServices = allServices;
+    });
+  }
+
+  void changeFilters(Map<String, bool> filterData) {
+    setState(() {
+      filters = filterData;
+      availableServices =
+          availableServices.where((service) {
+            if (filters['Irbid'] == true && service.location != 'Irbid') {
+              return false;
+            }
+            if (filters['Amman'] == true && service.location != 'Amman') {
+              return false;
+            }
+            if (filters['Aqaba'] == true && service.location != 'Aqaba') {
+              return false;
+            }
+            return true;
+          }).toList();
+    });
+  }
+
+  void manageFavorite(String serviceId) async {
+    final existingIndex = favoriteServices.indexWhere(
+      (service) => service.id == serviceId,
+    );
+
+    if (existingIndex >= 0) {
+      setState(() {
+        favoriteServices.removeAt(existingIndex);
+      });
+    } else {
+      final service = await ServiceService().getServiceById(serviceId);
+      setState(() {
+        favoriteServices.add(service);
+      });
+    }
+  }
+
+  bool isFavorite(String id) {
+    return favoriteServices.any((service) => service.id == id);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      localizationsDelegates: [
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [
-        Locale('en', 'EN'), // English
-        Locale('ar', 'AR'), // Arabic
-      ],
+      supportedLocales: const [Locale('en', 'EN'), Locale('ar', 'AR')],
       theme: ThemeData(
         primarySwatch: Colors.blue,
         hintColor: Colors.amber,
         fontFamily: 'ElMessiri',
         textTheme: ThemeData.light().textTheme.copyWith(
-          headlineSmall: TextStyle(
+          headlineSmall: const TextStyle(
             color: Colors.white,
             fontSize: 24,
             fontFamily: 'ElMessiri',
             fontWeight: FontWeight.bold,
           ),
-          headlineMedium: TextStyle(
+          headlineMedium: const TextStyle(
             color: Colors.white,
             fontSize: 26,
             fontFamily: 'ElMessiri',
@@ -51,17 +125,22 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-
-      // home: const Auth(),
-      // home: CategorieScreen(),
+      home: const WelcomScreen(),
       routes: {
-        '/': (context) => const Auth(),
-        'categoriescreen': (context) => const CategorieScreen(),
-        'signupscreen': (context) => const SignupScreen(),
-        'loginscreen': (context) => const LoginScreen(),
+        'welcome': (context) => const WelcomScreen(),
+        'login': (context) => const LoginScreen(),
+        'signup': (context) => const SignupScreen(),
+        'tabscreen': (context) => TabsScreen(favoriteServices),
+        'auth': (context) => Auth(),
+        'addservice': (context) => AddService(),
+        '/admin': (context) => AdminScreen(),
+        'categoriescreen': (context) => CategoryScreen(),
         CategoryServicesScreen.screenRoute:
-            (context) => CategoryServicesScreen(),
-        ServicesDetailScreen.screenRoute: (context) => ServicesDetailScreen(),
+            (context) => CategoryServicesScreen(availableServices),
+        CategoryDetailScreen.screenRoute:
+            (context) => CategoryDetailScreen(manageFavorite, isFavorite),
+        FiltersScreen.screenRoute:
+            (context) => FiltersScreen(filters, changeFilters),
       },
     );
   }
