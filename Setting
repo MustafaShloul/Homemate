@@ -1,0 +1,125 @@
+import 'package:flutter/material.dart';
+
+class SettingScreen extends StatelessWidget {
+  const SettingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // appBar: AppBar(title: const Text('الاعدادات')),
+      body: Center(
+        child: Container(
+          width: 300,
+          height: 200,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 3,
+                blurRadius: 7,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // Add about screen navigation
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AboutScreen(),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 15,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'حول',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Add logout logic
+                  _showLogoutDialog(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 15,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'تسجيل خروج',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text('تسجيل خروج '),
+            content: const Text('هل انت متأكد من الخروج '),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('الغاء'),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Add actual logout logic here
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                },
+                child: const Text('خروج'),
+              ),
+            ],
+          ),
+    );
+  }
+}
+
+// Example About Screen
+class AboutScreen extends StatelessWidget {
+  const AboutScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('عن التطبيق')),
+      body: const Padding(
+        padding: EdgeInsets.all(20),
+        child: Text(
+          ' تطبيقنا يسعى الى توفير جميع الخدمات التي تخص منزلك من تنظيف وصيانة والاهتمام بالمرافق ,وذلك بيد مهنيين ذو كفاءة واحترافية عالية والأهم من ذلك بيتك في أمان \n \n\n\nاذا كنت بحاجة مساعدة يرجى التواصل معنا Homemate@gmail.com',
+          style: TextStyle(fontSize: 18, fontFamily: 'ElMessiri'),
+        ),
+      ),
+    );
+  }
+}
