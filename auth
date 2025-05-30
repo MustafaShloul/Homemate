@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:homemate/screens/home_screen.dart';
-import 'package:homemate/screens/login_screen.dart';
+import 'package:homemate/auth/login_screen.dart';
+import 'package:homemate/screens/categorie_screen.dart';
+// import 'package:homemate/login_screen.dart';
 
 class Auth extends StatelessWidget {
   const Auth({super.key});
@@ -13,7 +14,7 @@ class Auth extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return HomeScreen();
+            return CategoryScreen();
           } else {
             return LoginScreen();
           }
