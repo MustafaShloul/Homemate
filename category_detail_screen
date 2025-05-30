@@ -1,0 +1,96 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:homemate/models/service.dart';
+import 'package:homemate/services/service_service.dart';
+
+class CategoryDetailScreen extends StatefulWidget {
+  static const screenRoute = '/service-detail';
+
+  final void Function(String) manageFavorite;
+  final bool Function(String) isFavorite;
+
+  const CategoryDetailScreen(this.manageFavorite, this.isFavorite, {super.key});
+
+  @override
+  _ServicesDetailScreenState createState() => _ServicesDetailScreenState();
+}
+
+class _ServicesDetailScreenState extends State<CategoryDetailScreen> {
+  late String categoryId;
+  late Future<List<Service>> _servicesFuture;
+  late Future<String> _categoryTitleFuture;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    categoryId = ModalRoute.of(context)?.settings.arguments as String;
+    _servicesFuture = ServiceService().getActiveServicesByCategoryId(
+      categoryId,
+    );
+    _categoryTitleFuture = _fetchCategoryTitle(categoryId);
+  }
+
+  Future<String> _fetchCategoryTitle(String id) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('categories').doc(id).get();
+    return doc.data()?['title'] ?? 'Unknown Category';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String>(
+      future: _categoryTitleFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        final categoryTitle = snapshot.data ?? 'Category';
+
+        return Scaffold(
+          appBar: AppBar(title: Text(categoryTitle)),
+          body: FutureBuilder<List<Service>>(
+            future: _servicesFuture,
+            builder: (context, serviceSnapshot) {
+              if (serviceSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (!serviceSnapshot.hasData || serviceSnapshot.data!.isEmpty) {
+                return const Center(
+                  child: Text('لا توجد خدمات متاحة لهذا التصنيف'),
+                );
+              }
+
+              final services = serviceSnapshot.data!;
+              return ListView.builder(
+                itemCount: services.length,
+                itemBuilder: (ctx, i) {
+                  final service = services[i];
+                  return Card(
+                    margin: const EdgeInsets.all(10),
+                    child: ListTile(
+                      title: Text(service.title),
+                      subtitle: Text(service.description),
+                      trailing: IconButton(
+                        icon: Icon(
+                          widget.isFavorite(service.id)
+                              ? Icons.star
+                              : Icons.star_border,
+                        ),
+                        onPressed: () => widget.manageFavorite(service.id),
+                      ),
+                      onTap: () {
+                        // optionally navigate to a single service screen
+                      },
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+}
