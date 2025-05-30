@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
-import '../screens/service_detail_screen.dart';
+import 'package:homemate/models/service.dart';
+import 'category_detail_screen.dart';
 
 class ServicesItem extends StatelessWidget {
   final String id;
   final String title;
-  final String image;
-  final ServiceType;
+
   final String phone;
-  final String name;
+
+  // final Function removeService;
+
+  final String location;
 
   const ServicesItem({
     super.key,
+
     required this.id,
     required this.title,
-    required this.image,
-    required this.ServiceType,
-    required this.name,
     required this.phone,
+    required this.location,
+    // required this.removeService,
   });
   void selectService(BuildContext context) {
     Navigator.of(
       context,
-    ).pushNamed(ServicesDetailScreen.screenRoute, arguments: id);
+    ).pushNamed(CategoryDetailScreen.screenRoute, arguments: id);
   }
 
   @override
@@ -46,12 +49,12 @@ class ServicesItem extends StatelessWidget {
                     topLeft: Radius.circular(15),
                     topRight: Radius.circular(15),
                   ),
-                  child: Image.asset(
-                    image,
-                    height: 250,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+                  // child: Image.asset(
+                  //   image,
+                  //   height: 250,
+                  //   width: double.infinity,
+                  //   fit: BoxFit.cover,
+                  // ),
                 ),
                 Container(
                   height: 250,
@@ -86,16 +89,22 @@ class ServicesItem extends StatelessWidget {
                     children: [
                       Icon(Icons.person, color: Colors.amber),
                       Text(
-                        name,
-                        style: TextStyle(fontFamily: 'ElMessiri', fontSize: 20),
+                        title,
+                        style: TextStyle(fontFamily: 'ElMessiri', fontSize: 17),
                       ),
 
-                      SizedBox(width: 20),
+                      SizedBox(width: 3),
 
                       Icon(Icons.phone, color: Colors.amber),
                       Text(
                         phone,
-                        style: TextStyle(fontFamily: 'ElMessiri', fontSize: 20),
+                        style: TextStyle(fontFamily: 'ElMessiri', fontSize: 17),
+                      ),
+                      SizedBox(width: 3),
+                      Icon(Icons.location_city, color: Colors.amber),
+                      Text(
+                        location,
+                        style: TextStyle(fontFamily: 'ElMessiri', fontSize: 17),
                       ),
                     ],
                   ),
