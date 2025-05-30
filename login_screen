@@ -1,12 +1,23 @@
+// import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatefulWidget {
+  static String id = 'Welcome';
+
   const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('id', id));
+  }
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -20,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void openSigupScreen() {
-    Navigator.of(context).pushReplacementNamed('signupscreen');
+    Navigator.of(context).pushReplacementNamed('signup');
   }
 
   @override
@@ -33,8 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
-
+      backgroundColor: Colors.grey[300],
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -44,16 +54,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 Image.asset('images/Logo.png', height: 180),
                 SizedBox(height: 20),
                 Text(
-                  'SIGN IN',
-                  style: GoogleFonts.robotoCondensed(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  'تسجيل الدخول',
+                  style: TextStyle(fontSize: 25, fontFamily: 'ElMessiri'),
                 ),
+                // ),
                 Text(
-                  'Welcome to see you again !',
-                  style: GoogleFonts.robotoCondensed(fontSize: 18),
+                  ' ! أهلاً بعودتك',
+                  style: TextStyle(fontSize: 20, fontFamily: 'ElMessiri'),
                 ),
+                // ),
                 SizedBox(height: 50),
                 //email
                 Padding(
@@ -69,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: _emailController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Email',
+                          hintText: 'البريد الالكتروني',
                         ),
                       ),
                     ),
@@ -91,18 +100,33 @@ class _LoginScreenState extends State<LoginScreen> {
                         obscureText: true,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Password',
+                          hintText: 'كلمة المرور',
                         ),
                       ),
                     ),
                   ),
                 ),
                 SizedBox(height: 20),
+                // InkWell(
+                //   onTap: (){
+                //     Navigator.of(context).pushNamed('signup');
+                //   },
+                // )
                 //button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
                   child: GestureDetector(
-                    onTap: signIn,
+                    onTap: () {
+                      if (_emailController.text == 'admin' &&
+                          _passwordContraller.text == 'admin') {
+                        Navigator.of(context).pushReplacementNamed(
+                          '/admin',
+                        ); // Navigate to admin screen
+                      } else {
+                        signIn(); // Call your existing sign-in function
+                        Navigator.of(context).pushReplacementNamed('tabscreen');
+                      }
+                    },
                     child: Container(
                       padding: EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -111,8 +135,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          'Sign In',
-                          style: GoogleFonts.robotoCondensed(
+                          'تسجيل الدخول',
+                          style: TextStyle(
+                            fontFamily: 'ElMessiri',
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -123,25 +148,41 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 SizedBox(height: 15),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Not yet a member ?',
-                      style: GoogleFonts.robotoCondensed(color: Colors.black),
+                      'ليس لديل حساب ؟',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                     ),
+                    SizedBox(width: 10),
                     GestureDetector(
                       onTap: openSigupScreen,
                       child: Text(
-                        'Sign up now',
+                        'انشاء حساب',
                         style: GoogleFonts.robotoCondensed(
-                          color: Colors.black,
+                          color: Colors.blue,
                           fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
                       ),
                     ),
                   ],
                 ),
+                SizedBox(height: 15),
+                // Container(
+                //   margin: EdgeInsets.only(top: 10, bottom: 20),
+                //   alignment: Alignment.center,
+                //   child: Text(
+                //     textAlign: TextAlign.center,
+                //     'Forgot Password',
+                //     style: TextStyle(fontSize: 14),
+                //   ),
+                // ),
               ],
             ),
           ),
