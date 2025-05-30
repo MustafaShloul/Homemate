@@ -1,46 +1,43 @@
-// import 'package:flutter/material.dart';
-
-// class AddService extends StatefulWidget {
-//   const AddService({super.key});
-
-//   @override
-//   State<AddService> createState() => _AddServiceState();
-// }
-
-// class _AddServiceState extends State<AddService> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(appBar: AppBar(title: Text('add service')));
-//   }
-// }
 import 'package:flutter/material.dart';
-
-class Category {
-  final String id;
-  final String name;
-
-  Category({required this.id, required this.name});
-}
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:homemate/models/category.dart';
+import 'package:homemate/services/category_service.dart';
+import 'package:homemate/screens/tabs_screen.dart';
 
 class AddService extends StatefulWidget {
+  const AddService({super.key});
+
   @override
   _AddServiceState createState() => _AddServiceState();
 }
 
 class _AddServiceState extends State<AddService> {
   final _formKey = GlobalKey<FormState>();
-  final List<Category> _categories = [
-    Category(id: 'C1', name: 'تنظيف'),
-    Category(id: 'C2', name: ' نقل'),
-    Category(id: 'C3', name: 'حديقة'),
-    Category(id: 'C4', name: 'صيانة'),
-  ];
 
+  List<Category> _categories = [];
   Category? _selectedCategory;
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    try {
+      final fetched = await CategoryService().getCategories();
+      setState(() {
+        _categories = fetched;
+      });
+    } catch (e) {
+      print("Error fetching categories: $e");
+    }
+  }
 
   @override
   void dispose() {
@@ -51,121 +48,126 @@ class _AddServiceState extends State<AddService> {
     super.dispose();
   }
 
-  void _saveForm() {
+  void _saveForm() async {
     if (_formKey.currentState!.validate()) {
-      // Save logic here
-      final serviceData = {
-        'categoryId': _selectedCategory?.id,
-        'title': _titleController.text,
-        'description': _descriptionController.text,
-        'phone': _phoneController.text,
-        'location': _locationController.text,
-      };
-      print(serviceData);
+      try {
+        await FirebaseFirestore.instance.collection('services').add({
+          'categoryId': _selectedCategory?.id,
+          'title': _titleController.text,
+          'description': _descriptionController.text,
+          'phone': _phoneController.text,
+          'location': _locationController.text,
+          'status': 'inactive',
+        });
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('تمت إضافة الخدمة بنجاح')));
+
+        // Navigate to home page (TabsScreen)
+        Navigator.of(context).pushReplacementNamed('tabscreen');
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('فشل في الإضافة: $e')));
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Add Service')),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Category Dropdown
-              DropdownButtonFormField<Category>(
-                decoration: InputDecoration(
-                  labelText: 'Category name',
-                  border: OutlineInputBorder(),
-                ),
-                value: _selectedCategory,
-                items:
-                    _categories.map((Category category) {
-                      return DropdownMenuItem<Category>(
-                        value: category,
-                        child: Text(category.name),
-                      );
-                    }).toList(),
-                onChanged: (Category? newValue) {
-                  setState(() {
-                    _selectedCategory = newValue;
-                  });
-                },
-                validator:
-                    (value) =>
-                        value == null ? 'Please select a category' : null,
-              ),
-
-              SizedBox(height: 16),
-              // Service Title
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: 'Services Title',
-                  border: OutlineInputBorder(),
-                ),
-                validator:
-                    (value) => value!.isEmpty ? 'Please enter a title' : null,
-              ),
-
-              SizedBox(height: 16),
-              // Service Description
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                  labelText: 'Services Description',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-                validator:
-                    (value) =>
-                        value!.isEmpty ? 'Please enter a description' : null,
-              ),
-
-              SizedBox(height: 16),
-              // Phone Number
-              TextFormField(
-                controller: _phoneController,
-                decoration: InputDecoration(
-                  labelText: 'Contact phone number',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.phone,
-                validator:
-                    (value) =>
-                        value!.isEmpty ? 'Please enter a phone number' : null,
-              ),
-
-              SizedBox(height: 16),
-              // Location
-              TextFormField(
-                controller: _locationController,
-                decoration: InputDecoration(
-                  labelText: 'Location',
-                  border: OutlineInputBorder(),
-                ),
-                validator:
-                    (value) =>
-                        value!.isEmpty ? 'Please enter a location' : null,
-              ),
-
-              SizedBox(height: 24),
-              // Save Button
-              ElevatedButton(
-                onPressed: _saveForm,
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text('Save'),
+      appBar: AppBar(title: const Text('طلب خدمة')),
+      body:
+          _categories.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      DropdownButtonFormField<Category>(
+                        decoration: const InputDecoration(
+                          labelText: 'التصنيف',
+                          border: OutlineInputBorder(),
+                        ),
+                        value: _selectedCategory,
+                        items:
+                            _categories.map((Category category) {
+                              return DropdownMenuItem<Category>(
+                                value: category,
+                                child: Text(category.name),
+                              );
+                            }).toList(),
+                        onChanged: (Category? newValue) {
+                          setState(() {
+                            _selectedCategory = newValue;
+                          });
+                        },
+                        validator:
+                            (value) =>
+                                value == null ? 'يرجى اختيار التصنيف' : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _titleController,
+                        decoration: const InputDecoration(
+                          labelText: '()عنوان الخدمة',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator:
+                            (value) =>
+                                value!.isEmpty ? 'ادخل اسم الخدمة' : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _descriptionController,
+                        decoration: const InputDecoration(
+                          labelText: 'وصف الخدمة',
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 3,
+                        validator:
+                            (value) =>
+                                value!.isEmpty ? 'الانشطة التي تقوم بها' : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _phoneController,
+                        decoration: const InputDecoration(
+                          labelText: 'الهاتف',
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.phone,
+                        validator:
+                            (value) =>
+                                value!.isEmpty ? 'ادخل رقم الهاتف' : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _locationController,
+                        decoration: const InputDecoration(
+                          labelText: 'الموقع',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator:
+                            (value) =>
+                                value!.isEmpty ? 'يرجى اختيار موقعك' : null,
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: _saveForm,
+                        child: const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Text('طلب'),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
