@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../screens/filters_screen.dart';
 
 class AppDrawer extends StatelessWidget {
-  const AppDrawer({super.key});
+  const AppDrawer({super.key, required Widget body});
   Widget buildListTile(
     String title,
     IconData icon,
@@ -42,7 +42,7 @@ class AppDrawer extends StatelessWidget {
           ),
           SizedBox(height: 20),
           buildListTile('الخدمات', Icons.card_travel, () {
-            Navigator.of(context).pushNamed('/');
+            Navigator.of(context).pushNamed('tabscreen');
           }),
           buildListTile('الفلترة', Icons.filter_list, () {
             Navigator.of(context).pushNamed(FiltersScreen.screenRoute);
