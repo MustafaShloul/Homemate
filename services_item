@@ -7,6 +7,7 @@ class ServicesItem extends StatelessWidget {
   final String title;
 
   final String phone;
+  final String providerName;
 
   // final Function removeService;
 
@@ -19,6 +20,7 @@ class ServicesItem extends StatelessWidget {
     required this.title,
     required this.phone,
     required this.location,
+    required this.providerName,
     // required this.removeService,
   });
   void selectService(BuildContext context) {
@@ -89,7 +91,7 @@ class ServicesItem extends StatelessWidget {
                     children: [
                       Icon(Icons.person, color: Colors.amber),
                       Text(
-                        title,
+                        providerName,
                         style: TextStyle(fontFamily: 'ElMessiri', fontSize: 17),
                       ),
 
