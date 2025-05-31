@@ -16,6 +16,7 @@ class _AdminScreenState extends State<AdminScreen> {
           .doc(serviceId)
           .update({'status': status});
       ScaffoldMessenger.of(
+        // ignore: use_build_context_synchronously
         context,
       ).showSnackBar(SnackBar(content: Text('Service $status successfully.')));
     } catch (e) {
@@ -61,8 +62,9 @@ class _AdminScreenState extends State<AdminScreen> {
                 .where('status', isEqualTo: 'pending')
                 .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData)
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
+          }
 
           final services = snapshot.data!.docs;
 
