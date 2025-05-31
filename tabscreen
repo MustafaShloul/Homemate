@@ -19,11 +19,7 @@ class TabsScreenState extends State<TabsScreen> {
 
   @override
   void initState() {
-    screens = [
-      CategoryScreen(),
-      FavoriteScreen(widget.favoriteServices),
-      SettingScreen(),
-    ];
+    screens = [CategoryScreen(), FavoriteServicesScreen(), SettingScreen()];
     super.initState();
   }
 
