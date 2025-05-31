@@ -1,121 +1,86 @@
 import 'package:flutter/material.dart';
-import 'package:homemate/models/service.dart';
-import 'category_detail_screen.dart';
 
 class ServicesItem extends StatelessWidget {
   final String id;
   final String title;
-
   final String phone;
   final String providerName;
-
-  // final Function removeService;
-
   final String location;
+  final bool isFavorite;
+  final VoidCallback onToggleFavorite;
 
   const ServicesItem({
     super.key,
-
     required this.id,
     required this.title,
     required this.phone,
     required this.location,
     required this.providerName,
-    // required this.removeService,
+    required this.isFavorite,
+    required this.onToggleFavorite,
   });
-  void selectService(BuildContext context) {
-    Navigator.of(
-      context,
-    ).pushNamed(CategoryDetailScreen.screenRoute, arguments: id);
-  }
 
   @override
   Widget build(BuildContext context) {
-    //inkwell : بستخدمها عشان يلي بكون داخلها يصير قابل للضغط
-    return InkWell(
-      onTap: () => selectService(context),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        // هون بتتحكم بدرجة الظل خلف البطاقة
-        elevation: 7,
-
-        // هاي بتتحكم بالمسافة الخارجية للبطاقة
-        margin: EdgeInsets.all(10),
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // بتساعدني ارتب الاشياء فوق بعض
-            Stack(
+            // Top Row: Title + Favorite Icon
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15),
-                  ),
-                  // child: Image.asset(
-                  //   image,
-                  //   height: 250,
-                  //   width: double.infinity,
-                  //   fit: BoxFit.cover,
-                  // ),
-                ),
-                Container(
-                  height: 250,
-                  //عشان احدد مكان ال child
-                  alignment: Alignment.bottomRight,
-                  //بحط مسافات داخلية عشان ابعد النص عن الاطراف
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  decoration: BoxDecoration(
-                    //بتحكم بدرجة شفافية اللون
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withOpacity(0),
-                        Colors.black.withOpacity(0.8),
-                      ],
-                    ),
-                  ),
+                Expanded(
                   child: Text(
                     title,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                    overflow: TextOverflow.fade,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                IconButton(
+                  onPressed: onToggleFavorite,
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : Colors.grey,
                   ),
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.person, color: Colors.amber),
-                      Text(
-                        providerName,
-                        style: TextStyle(fontFamily: 'ElMessiri', fontSize: 17),
-                      ),
+            const SizedBox(height: 12),
 
-                      SizedBox(width: 3),
-
-                      Icon(Icons.phone, color: Colors.amber),
-                      Text(
-                        phone,
-                        style: TextStyle(fontFamily: 'ElMessiri', fontSize: 17),
-                      ),
-                      SizedBox(width: 3),
-                      Icon(Icons.location_city, color: Colors.amber),
-                      Text(
-                        location,
-                        style: TextStyle(fontFamily: 'ElMessiri', fontSize: 17),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            // Info Row
+            _buildInfoRow(Icons.person, providerName),
+            const SizedBox(height: 8),
+            _buildInfoRow(Icons.phone, phone),
+            const SizedBox(height: 8),
+            _buildInfoRow(Icons.location_on, location),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: Colors.amber),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(fontSize: 16, fontFamily: 'ElMessiri'),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 }
