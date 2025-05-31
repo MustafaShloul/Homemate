@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -9,14 +9,20 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
-  Offset _offset = Offset.zero;
-  bool _isRPressed = false;
-
-  void _handleKeyEvent(RawKeyEvent event) {
-    if (event.logicalKey == LogicalKeyboardKey.keyR) {
-      setState(() {
-        _isRPressed = event is RawKeyDownEvent;
-      });
+  Future<void> _updateServiceStatus(String serviceId, String status) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('services')
+          .doc(serviceId)
+          .update({'status': status});
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Service $status successfully.')));
+    } catch (e) {
+      print('Error updating service: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error updating service status.')));
     }
   }
 
@@ -25,7 +31,6 @@ class _AdminScreenState extends State<AdminScreen> {
   }
 
   void _generateReport() {
-    // Implement report generation
     showDialog(
       context: context,
       builder:
@@ -34,7 +39,10 @@ class _AdminScreenState extends State<AdminScreen> {
             content: const Text('Service report generated successfully.'),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  Navigator.pushNamed(context, 'generate_report');
+                },
+
                 child: const Text('OK'),
               ),
             ],
@@ -44,80 +52,71 @@ class _AdminScreenState extends State<AdminScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RawKeyboardListener(
-      focusNode: FocusNode(),
-      onKey: _handleKeyEvent,
-      child: GestureDetector(
-        onPanUpdate: (details) {
-          if (_isRPressed) {
-            setState(() {
-              _offset += details.delta;
-            });
+    return Scaffold(
+      appBar: AppBar(title: const Text('Admin Dashboard')),
+      body: StreamBuilder<QuerySnapshot>(
+        stream:
+            FirebaseFirestore.instance
+                .collection('services')
+                .where('status', isEqualTo: 'pending')
+                .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData)
+            return const Center(child: CircularProgressIndicator());
+
+          final services = snapshot.data!.docs;
+
+          if (services.isEmpty) {
+            return const Center(child: Text('No pending services.'));
           }
+
+          return ListView.builder(
+            itemCount: services.length,
+            itemBuilder: (context, index) {
+              final doc = services[index];
+              final data = doc.data() as Map<String, dynamic>;
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: ListTile(
+                  title: Text(data['providerName'] ?? 'مقدم الخدمة غير معروف'),
+                  subtitle: Text(data['description'] ?? 'No Description'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.check, color: Colors.green),
+                        onPressed:
+                            () => _updateServiceStatus(doc.id, 'accepted'),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.red),
+                        onPressed:
+                            () => _updateServiceStatus(doc.id, 'rejected'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
         },
-        child: Scaffold(
-          appBar: AppBar(title: const Text('Admin Dashboard')),
-          body: Stack(
-            children: [
-              Transform.translate(
-                offset: _offset,
-                child: const Center(
-                  // child: Text('Canvas Content (Hold R to move)'),
-                ),
-              ),
-              Positioned(
-                right: 20,
-                top: 20,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // Row(
-                    // children: [
-                    //   ElevatedButton(
-                    //     onPressed: () {
-                    //       /* Accept logic */
-                    //     },
-                    //     child: const Text('Accept'),
-                    //   ),
-                    //   const SizedBox(width: 10),
-                    //   ElevatedButton(
-                    //     onPressed: () {
-                    //       /* Reject logic */
-                    //     },
-                    //     child: const Text('Reject'),
-                    //   ),
-                    // ],
-                    // ),
-                    // const SizedBox(height: 10),
-                    // ElevatedButton(
-                    //   onPressed: _generateReport,
-                    //   child: const Text(
-                    //     'Generate Report\n(all services & providers)',
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 10),
-                    // ElevatedButton(
-                    //   onPressed: () {
-                    //     /* Show services logic */
-                    //   },
-                    //   child: const Text('Show all services'),
-                    // ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: _generateReport,
-                      child: const Text('Generate Report'),
-                    ),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: _logout,
-                      child: const Text('Logout'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+      ),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton.extended(
+            onPressed: _generateReport,
+            label: const Text('Generate Report'),
+            icon: const Icon(Icons.file_copy),
           ),
-        ),
+          const SizedBox(height: 10),
+          FloatingActionButton.extended(
+            onPressed: _logout,
+            label: const Text('Logout'),
+            icon: const Icon(Icons.logout),
+            backgroundColor: Colors.red,
+          ),
+        ],
       ),
     );
   }
