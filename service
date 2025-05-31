@@ -10,79 +10,35 @@ class Service {
   final String categoryId;
   final String title;
   final String description;
-  final String location;
   final String phone;
-  final String status;
+  final String location;
+  final String status; // 'inactive', 'active', 'rejected'
+  final String providerName;
 
   Service({
     required this.id,
     required this.categoryId,
     required this.title,
     required this.description,
-    required this.location,
     required this.phone,
+    required this.location,
     required this.status,
+    required this.providerName,
   });
 
+  // Factory constructor to create a Service object from a Firestore DocumentSnapshot
   factory Service.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return Service(
       id: doc.id,
       categoryId: data['categoryId'] ?? '',
-      title: data['title'] ?? '',
-      description: data['description'] ?? '',
-      location: data['location'] ?? '',
-      phone: data['phone'] ?? '',
-      status: data['status'] ?? '',
+      title: data['title'] ?? 'No Title', // Provide default values
+      description: data['description'] ?? 'No Description',
+      phone: data['phone'] ?? 'N/A',
+      location: data['location'] ?? 'Unknown',
+      status:
+          data['status'] ?? 'inactive', // Default to 'inactive' if not present
+      providerName: data['providerName'] ?? '',
     );
   }
 }
-
-// import 'package:cloud_firestore/cloud_firestore.dart';
-
-// class Service {
-//   final String id;
-//   final String title;
-//   final String description;
-//   final String category;
-//   final String status;
-//   final DateTime timestamp;
-//   final String image;
-//   final String serviceType;
-//   final String name;
-//   final String phone;
-//   final String location;
-
-//   Service({
-//     required this.id,
-//     required this.title,
-//     required this.description,
-//     required this.category,
-//     this.status = 'pending',
-//     required this.timestamp,
-//     required this.image,
-//     required this.serviceType,
-//     required this.name,
-//     required this.phone,
-//     required this.location,
-//   });
-
-//   factory Service.fromFirestore(DocumentSnapshot doc) {
-//     Map data = doc.data() as Map<String, dynamic>;
-//     return Service(
-//       id: doc.id,
-//       title: data['title'] ?? '',
-//       description: data['description'] ?? '',
-//       category: data['category'] ?? '',
-//       status: data['status'] ?? 'pending',
-//       timestamp: data['timestamp'].toDate(),
-//       image: doc.id,
-//       serviceType: data['serviceType'],
-//       name: data['name'],
-//       phone: data['phone'],
-//       location: data['location'],
-//     );
-//   }
-
-//   get categories => null;
-// }
