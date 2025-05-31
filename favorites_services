@@ -1,0 +1,75 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+class FavoritesService {
+  final _firestore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
+
+  // Get reference to current user's favorites collection
+  CollectionReference get _favoritesRef {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) {
+      throw Exception('User not authenticated');
+    }
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('favorite_services');
+  }
+
+  /// Add service to favorites
+  Future<void> addToFavorites(String serviceId) async {
+    try {
+      await _favoritesRef.doc(serviceId).set({
+        'addedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print('Error adding to favorites: $e');
+    }
+  }
+
+  /// Remove service from favorites
+  Future<void> removeFromFavorites(String serviceId) async {
+    try {
+      await _favoritesRef.doc(serviceId).delete();
+    } catch (e) {
+      print('Error removing from favorites: $e');
+    }
+  }
+
+  /// Check if a service is in favorites
+  Future<bool> isFavorite(String serviceId) async {
+    try {
+      final doc = await _favoritesRef.doc(serviceId).get();
+      return doc.exists;
+    } catch (e) {
+      print('Error checking favorite status: $e');
+      return false;
+    }
+  }
+
+  /// Get all favorite service IDs once (non-realtime)
+  Future<List<String>> getFavoriteServiceIdsOnce() async {
+    try {
+      final snapshot = await _favoritesRef.get();
+      return snapshot.docs.map((doc) => doc.id).toList();
+    } catch (e) {
+      print('Error getting favorite services: $e');
+      return [];
+    }
+  }
+
+  /// Listen to favorite services (real-time stream)
+  Stream<List<String>> getFavoriteServiceIdsStream() {
+    return _favoritesRef.snapshots().map(
+      (snapshot) => snapshot.docs.map((doc) => doc.id).toList(),
+    );
+  }
+
+  /// Get real-time stream of favorite service IDs
+  Stream<List<String>> getFavoriteServiceIds() {
+    return _favoritesRef.snapshots().map(
+      (snapshot) => snapshot.docs.map((doc) => doc.id).toList(),
+    );
+  }
+}
