@@ -1,11 +1,12 @@
-// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:homemate/screens/services_item.dart';
 import '../models/service.dart';
+import '../services/favorites_services.dart'; // 👈 import your favorite service
 
 class CategoryServicesScreen extends StatefulWidget {
   static const screenRoute = '/category-servicse';
   final List<Service> availableServices;
+
   const CategoryServicesScreen(this.availableServices, {super.key});
 
   @override
@@ -15,22 +16,42 @@ class CategoryServicesScreen extends StatefulWidget {
 class CategoryServicesScreenState extends State<CategoryServicesScreen> {
   late String categoryTitle;
   late List<Service> displayServices;
+  List<String> favoriteServiceIds = [];
+
+  final FavoritesService _favoritesService = FavoritesService();
+
   @override
   void initState() {
     super.initState();
+    _loadFavorites();
+  }
+
+  Future<void> _loadFavorites() async {
+    final ids = await _favoritesService.getFavoriteServiceIdsOnce();
+    setState(() {
+      favoriteServiceIds = ids;
+    });
+  }
+
+  void _toggleFavorite(String serviceId) async {
+    if (favoriteServiceIds.contains(serviceId)) {
+      await _favoritesService.removeFromFavorites(serviceId);
+    } else {
+      await _favoritesService.addToFavorites(serviceId);
+    }
+    _loadFavorites();
   }
 
   @override
   void didChangeDependencies() {
     final routeArgument =
         ModalRoute.of(context)?.settings.arguments as Map<String, String>;
-
     final categoryId = routeArgument['id'];
     categoryTitle = routeArgument['title']!;
     displayServices =
-        widget.availableServices.where((service) {
-          return service.categoryId == categoryId;
-        }).toList();
+        widget.availableServices
+            .where((service) => service.categoryId == categoryId)
+            .toList();
     super.didChangeDependencies();
   }
 
@@ -40,30 +61,24 @@ class CategoryServicesScreenState extends State<CategoryServicesScreen> {
       appBar: AppBar(
         title: Text(
           categoryTitle,
-          style: TextStyle(
-            fontFamily: 'Amiri',
-            fontStyle: FontStyle.normal,
-            fontSize: 25,
-          ),
+          style: TextStyle(fontFamily: 'Amiri', fontSize: 25),
         ),
         backgroundColor: Colors.blue,
       ),
       body: ListView.builder(
+        itemCount: displayServices.length,
         itemBuilder: (context, index) {
+          final service = displayServices[index];
           return ServicesItem(
-            id: displayServices[index].id,
-            title: displayServices[index].title,
-            phone: displayServices[index].phone,
-            location: displayServices[index].location,
-            providerName: displayServices[index].providerName,
-
-            // serviceType: displayServices[index].serviceType,
-            // category: null,
-
-            // removeService: _removeService,
+            id: service.id,
+            title: service.title,
+            phone: service.phone,
+            location: service.location,
+            providerName: service.providerName,
+            isFavorite: favoriteServiceIds.contains(service.id),
+            onToggleFavorite: () => _toggleFavorite(service.id),
           );
         },
-        itemCount: displayServices.length,
       ),
     );
   }
