@@ -1,28 +1,81 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:homemate/models/service.dart';
-import '../screens/services_item.dart';
+import 'package:homemate/screens/services_item.dart';
+import 'package:homemate/services/favorites_services.dart';
 
-class FavoriteScreen extends StatelessWidget {
-  // const FavoriteScreen(List<Service> favoriteServices, {super.key});
-  final List<Service> favoriteServices;
-  const FavoriteScreen(this.favoriteServices, {super.key});
+class FavoriteServicesScreen extends StatefulWidget {
+  const FavoriteServicesScreen({super.key});
+
+  @override
+  State<FavoriteServicesScreen> createState() => _FavoriteServicesScreenState();
+}
+
+class _FavoriteServicesScreenState extends State<FavoriteServicesScreen> {
+  final FavoritesService _favoritesService = FavoritesService();
+  List<String> favoriteServiceIds = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorites();
+  }
+
+  Future<void> _loadFavorites() async {
+    final ids = await _favoritesService.getFavoriteServiceIdsOnce();
+    setState(() {
+      favoriteServiceIds = ids;
+    });
+  }
+
+  void _toggleFavorite(String serviceId) async {
+    if (favoriteServiceIds.contains(serviceId)) {
+      await _favoritesService.removeFromFavorites(serviceId);
+    } else {
+      await _favoritesService.addToFavorites(serviceId);
+    }
+    _loadFavorites();
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (favoriteServices.isEmpty) {
-      return Center(child: Text(' ليس لديك أي خدمة  في قائمة المفضلة'));
-    } else {
-      return ListView.builder(
-        itemBuilder: (context, index) {
-          return ServicesItem(
-            id: favoriteServices[index].id,
-            title: favoriteServices[index].title,
-            phone: favoriteServices[index].phone,
-            location: favoriteServices[index].location,
-            providerName: favoriteServices[index].providerName,
-          );
-        },
-        itemCount: favoriteServices.length, // تم التغيير هنا
-      );
-    }
+    return StreamBuilder<List<String>>(
+      stream: _favoritesService.getFavoriteServiceIds(),
+      builder: (context, snapshot) {
+        final favoriteIds = snapshot.data ?? [];
+
+        if (favoriteIds.isEmpty) {
+          return const Center(child: Text("No favorite services yet."));
+        }
+
+        return FutureBuilder<QuerySnapshot>(
+          future: FirebaseFirestore.instance.collection('services').get(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return const CircularProgressIndicator();
+
+            final allServices = snapshot.data!.docs;
+            final favoriteServices =
+                allServices.where((s) => favoriteIds.contains(s.id)).toList();
+
+            return ListView.builder(
+              itemCount: favoriteServices.length,
+              itemBuilder: (ctx, index) {
+                final service = favoriteServices[index];
+                final serviceId = service.id;
+
+                return ServicesItem(
+                  id: serviceId,
+                  title: service['title'],
+                  phone: service['phone'],
+                  location: service['location'],
+                  providerName: service['providerName'],
+                  isFavorite: favoriteServiceIds.contains(service.id),
+                  onToggleFavorite: () => _toggleFavorite(service.id),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
   }
 }
