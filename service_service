@@ -33,7 +33,7 @@ class ServiceService {
     final query =
         await FirebaseFirestore.instance
             .collection('services')
-            .where('status', isEqualTo: 'pending') // ✅ متناسق مع الكود الحالي
+            .where('status', isEqualTo: 'pending')
             .get();
     return query.docs.map((doc) => Service.fromFirestore(doc)).toList();
   }
