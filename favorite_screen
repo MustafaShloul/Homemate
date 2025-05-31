@@ -16,11 +16,9 @@ class FavoriteScreen extends StatelessWidget {
           return ServicesItem(
             id: favoriteServices[index].id,
             title: favoriteServices[index].title,
-            image: favoriteServices[index].image,
-            ServiceType: favoriteServices[index].serviceType,
-            name: favoriteServices[index].name,
             phone: favoriteServices[index].phone,
             location: favoriteServices[index].location,
+            providerName: favoriteServices[index].providerName,
           );
         },
         itemCount: favoriteServices.length, // تم التغيير هنا
