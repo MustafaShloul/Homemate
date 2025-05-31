@@ -8,6 +8,8 @@ import 'package:homemate/widgets/category_item.dart';
 import 'package:homemate/services/category_service.dart';
 
 class CategoryScreen extends StatefulWidget {
+  const CategoryScreen({super.key});
+
   @override
   _CategoriesPageState createState() => _CategoriesPageState();
 }
