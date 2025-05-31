@@ -6,10 +6,11 @@ import 'package:homemate/auth/signup_screen.dart';
 import 'package:homemate/auth.dart';
 import 'package:homemate/screens/Admin_screen.dart';
 import 'package:homemate/screens/add_service.dart';
-import 'package:homemate/screens/categorie_screen.dart';
+import 'package:homemate/screens/category_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:homemate/auth/login_screen.dart';
 import 'package:homemate/screens/category_services_screen.dart';
+import 'package:homemate/screens/generate_report.dart';
 import 'package:homemate/services/service_service.dart';
 import './screens/filters_screen.dart';
 import 'package:homemate/screens/welcome_screen.dart';
@@ -135,6 +136,7 @@ class _MyAppState extends State<MyApp> {
         'addservice': (context) => AddService(),
         '/admin': (context) => AdminScreen(),
         'categoriescreen': (context) => CategoryScreen(),
+        'generate_report': (ctx) => GenerateReportScreen(),
         CategoryServicesScreen.screenRoute:
             (context) => CategoryServicesScreen(availableServices),
         CategoryDetailScreen.screenRoute:
