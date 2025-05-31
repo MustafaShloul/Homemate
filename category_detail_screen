@@ -24,16 +24,14 @@ class _ServicesDetailScreenState extends State<CategoryDetailScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     categoryId = ModalRoute.of(context)?.settings.arguments as String;
-    _servicesFuture = ServiceService().getActiveServicesByCategoryId(
-      categoryId,
-    );
+    _servicesFuture = ServiceService().getPendingServices(categoryId);
     _categoryTitleFuture = _fetchCategoryTitle(categoryId);
   }
 
   Future<String> _fetchCategoryTitle(String id) async {
     final doc =
         await FirebaseFirestore.instance.collection('categories').doc(id).get();
-    return doc.data()?['title'] ?? 'Unknown Category';
+    return doc.data()?['title'] ?? 'تفاصيل الخدمة ';
   }
 
   @override
@@ -69,20 +67,40 @@ class _ServicesDetailScreenState extends State<CategoryDetailScreen> {
                   final service = services[i];
                   return Card(
                     margin: const EdgeInsets.all(10),
-                    child: ListTile(
-                      title: Text(service.title),
-                      subtitle: Text(service.description),
-                      trailing: IconButton(
-                        icon: Icon(
-                          widget.isFavorite(service.id)
-                              ? Icons.star
-                              : Icons.star_border,
-                        ),
-                        onPressed: () => widget.manageFavorite(service.id),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  service.title,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  widget.isFavorite(service.id)
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  color: Colors.amber,
+                                ),
+                                onPressed:
+                                    () => widget.manageFavorite(service.id),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            service.description,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ],
                       ),
-                      onTap: () {
-                        // optionally navigate to a single service screen
-                      },
                     ),
                   );
                 },
