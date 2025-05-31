@@ -55,6 +55,8 @@ class CategoryServicesScreenState extends State<CategoryServicesScreen> {
             title: displayServices[index].title,
             phone: displayServices[index].phone,
             location: displayServices[index].location,
+            providerName: displayServices[index].providerName,
+
             // serviceType: displayServices[index].serviceType,
             // category: null,
 
