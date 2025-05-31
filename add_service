@@ -18,6 +18,7 @@ class _AddServiceState extends State<AddService> {
   Category? _selectedCategory;
 
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _providerNameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
@@ -42,6 +43,7 @@ class _AddServiceState extends State<AddService> {
   @override
   void dispose() {
     _titleController.dispose();
+    _providerNameController.dispose();
     _descriptionController.dispose();
     _phoneController.dispose();
     _locationController.dispose();
@@ -54,10 +56,11 @@ class _AddServiceState extends State<AddService> {
         await FirebaseFirestore.instance.collection('services').add({
           'categoryId': _selectedCategory?.id,
           'title': _titleController.text,
+          'providerName': _providerNameController.text,
           'description': _descriptionController.text,
           'phone': _phoneController.text,
           'location': _locationController.text,
-          'status': 'inactive',
+          'status': 'pending',
         });
 
         ScaffoldMessenger.of(
@@ -111,6 +114,18 @@ class _AddServiceState extends State<AddService> {
                                 value == null ? 'يرجى اختيار التصنيف' : null,
                       ),
                       const SizedBox(height: 16),
+                      // حقل جديد لاسم مقدم الخدمة
+                      TextFormField(
+                        controller: _providerNameController,
+                        decoration: const InputDecoration(
+                          labelText: 'اسم مقدم الخدمة',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator:
+                            (value) =>
+                                value!.isEmpty ? 'ادخل اسم مقدم الخدمة' : null,
+                      ),
+                      SizedBox(height: 16),
                       TextFormField(
                         controller: _titleController,
                         decoration: const InputDecoration(
