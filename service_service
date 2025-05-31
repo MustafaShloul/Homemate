@@ -29,12 +29,11 @@ class ServiceService {
     return query.docs.map((doc) => Service.fromFirestore(doc)).toList();
   }
 
-  Future<List<Service>> getActiveServicesByCategoryId(String categoryId) async {
+  Future<List<Service>> getPendingServices(String categoryId) async {
     final query =
         await FirebaseFirestore.instance
             .collection('services')
-            .where('categoryId', isEqualTo: categoryId)
-            .where('status', isEqualTo: 'active')
+            .where('status', isEqualTo: 'pending') // ✅ متناسق مع الكود الحالي
             .get();
     return query.docs.map((doc) => Service.fromFirestore(doc)).toList();
   }
@@ -48,10 +47,10 @@ class ServiceService {
     return query.docs.map((doc) => Service.fromFirestore(doc)).toList();
   }
 
-  Future<void> updateStatusToActive(String serviceId) async {
+  Future<void> updateStatusToRejected(String serviceId) async {
     await FirebaseFirestore.instance
         .collection('services')
         .doc(serviceId)
-        .update({'status': 'active'});
+        .update({'status': 'rejected'});
   }
 }
