@@ -1,56 +1,45 @@
-// services/service_service.dart
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:homemate/models/service.dart';
 
 class ServiceService {
-  final CollectionReference _serviceCollection = FirebaseFirestore.instance
-      .collection('services');
+  // المرجع لمجموعة الخدمات في Firestore
+  final CollectionReference _serviceCollection = FirebaseFirestore.instance.collection('services');
 
+  // جلب كل الخدمات كمجموعة List<Service>
   Future<List<Service>> getServices() async {
     final querySnapshot = await _serviceCollection.get();
     return querySnapshot.docs.map((doc) => Service.fromFirestore(doc)).toList();
   }
 
+  // جلب خدمة محددة حسب الـ ID الخاص بها
   Future<Service> getServiceById(String id) async {
     final doc = await _serviceCollection.doc(id).get();
     if (!doc.exists) {
-      throw Exception("Service with ID $id not found");
+      throw Exception("Service with ID $id not found"); // في حال عدم وجود الخدمة
     }
     return Service.fromFirestore(doc);
   }
 
+  // جلب الخدمات التي تنتمي لفئة معينة (حسب categoryId)
   Future<List<Service>> getServicesByCategoryId(String categoryId) async {
-    final query =
-        await FirebaseFirestore.instance
-            .collection('services')
-            .where('categoryId', isEqualTo: categoryId)
-            .get();
+    final query = await _serviceCollection.where('categoryId', isEqualTo: categoryId).get();
     return query.docs.map((doc) => Service.fromFirestore(doc)).toList();
   }
 
+  // جلب الخدمات التي حالتها "pending" (قيد الانتظار)
   Future<List<Service>> getPendingServices(String categoryId) async {
-    final query =
-        await FirebaseFirestore.instance
-            .collection('services')
-            .where('status', isEqualTo: 'pending')
-            .get();
+    final query = await _serviceCollection.where('status', isEqualTo: 'pending').get();
     return query.docs.map((doc) => Service.fromFirestore(doc)).toList();
   }
 
+  // جلب الخدمات التي حالتها "inactive" (غير نشطة)
   Future<List<Service>> getInActiveServices() async {
-    final query =
-        await FirebaseFirestore.instance
-            .collection('services')
-            .where('status', isEqualTo: 'inactive')
-            .get();
+    final query = await _serviceCollection.where('status', isEqualTo: 'inactive').get();
     return query.docs.map((doc) => Service.fromFirestore(doc)).toList();
   }
 
+  // تحديث حالة خدمة معينة إلى "rejected" (مرفوضة)
   Future<void> updateStatusToRejected(String serviceId) async {
-    await FirebaseFirestore.instance
-        .collection('services')
-        .doc(serviceId)
-        .update({'status': 'rejected'});
+    await _serviceCollection.doc(serviceId).update({'status': 'rejected'});
   }
 }
