@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
 class ServicesItem extends StatelessWidget {
+  // خصائص الكائن: بيانات الخدمة والحالة وما إلى ذلك
   final String id;
   final String title;
   final String phone;
   final String providerName;
   final String location;
-  final bool isFavorite;
-  final VoidCallback onToggleFavorite;
+  final bool isFavorite;           // هل الخدمة مفضلة أم لا (يعرض الأيقونة بناءً عليه)
+  final VoidCallback onToggleFavorite;  // دالة لتبديل حالة المفضلة عند الضغط
 
+  // منشئ الكائن مع جميع الحقول المطلوبة
   const ServicesItem({
     super.key,
     required this.id,
@@ -23,6 +25,7 @@ class ServicesItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      // تصميم البطاقة: حواف مدورة وارتفاع ظل
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
@@ -31,7 +34,7 @@ class ServicesItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top Row: Title + Favorite Icon
+            // الصف العلوي: عنوان الخدمة وأيقونة المفضلة
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -39,14 +42,14 @@ class ServicesItem extends StatelessWidget {
                   child: Text(
                     title,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                    overflow: TextOverflow.ellipsis,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                    overflow: TextOverflow.ellipsis, // يمنع النص الطويل من كسر التصميم
                   ),
                 ),
                 IconButton(
-                  onPressed: onToggleFavorite,
+                  onPressed: onToggleFavorite, // تنفيذ دالة تبديل المفضلة عند الضغط
                   icon: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
                     color: isFavorite ? Colors.red : Colors.grey,
@@ -56,7 +59,7 @@ class ServicesItem extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Info Row
+            // صفوف معلومات: اسم المزود، رقم الهاتف، الموقع
             _buildInfoRow(Icons.person, providerName),
             const SizedBox(height: 8),
             _buildInfoRow(Icons.phone, phone),
@@ -68,6 +71,7 @@ class ServicesItem extends StatelessWidget {
     );
   }
 
+  // دالة مساعدة لبناء صف معلومات يحتوي على أيقونة ونص
   Widget _buildInfoRow(IconData icon, String text) {
     return Row(
       children: [
