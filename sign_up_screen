@@ -1,49 +1,256 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:flutter/material.dart';
+// import 'package:google_fonts/google_fonts.dart';
+
+// class SignupScreen extends StatefulWidget {
+//   const SignupScreen({super.key});
+
+//   @override
+//   State<SignupScreen> createState() => _SignupScreenState();
+// }
+
+// class _SignupScreenState extends State<SignupScreen> {
+//   final _emailController = TextEditingController();
+//   final _passwordController = TextEditingController(); // تم التصحيح هنا
+//   final _confirmPasswordController = TextEditingController(); // تم التصحيح هنا
+
+//   Future<bool> signUp() async {
+//     try {
+//       if (passwordConfirmed() && _fieldsAreValid()) {
+//         await FirebaseAuth.instance.createUserWithEmailAndPassword(
+//           email: _emailController.text.trim(),
+//           password: _passwordController.text.trim(),
+//         );
+//         return true;
+//       }
+//       return false;
+//     } on FirebaseAuthException catch (e) {
+//       String errorMessage = 'An error occurred';
+//       if (e.code == 'weak-password') {
+//         errorMessage = 'Password is too weak';
+//       } else if (e.code == 'email-already-in-use') {
+//         errorMessage = 'Email is already registered';
+//       }
+//       ScaffoldMessenger.of(
+//         context,
+//       ).showSnackBar(SnackBar(content: Text(errorMessage)));
+//       return false;
+//     }
+//   }
+
+//   bool passwordConfirmed() {
+//     return _passwordController.text.trim() ==
+//         _confirmPasswordController.text.trim();
+//   }
+
+//   bool _fieldsAreValid() {
+//     return _emailController.text.isNotEmpty &&
+//         _passwordController.text.isNotEmpty &&
+//         _confirmPasswordController.text.isNotEmpty;
+//   }
+
+//   @override
+//   void dispose() {
+//     _emailController.dispose();
+//     _passwordController.dispose();
+//     _confirmPasswordController.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.grey[300],
+//       body: SafeArea(
+//         child: Center(
+//           child: SingleChildScrollView(
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Image.asset('images/Logo.png', height: 180),
+//                 const SizedBox(height: 20),
+//                 Text(
+//                   'تسجيل',
+//                   style: GoogleFonts.robotoCondensed(
+//                     fontSize: 40,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 ),
+//                 const SizedBox(height: 10),
+//                 Text(
+//                   'انشاء حسابك',
+//                   style: GoogleFonts.robotoCondensed(fontSize: 18),
+//                 ),
+//                 const SizedBox(height: 30),
+
+//                 // Email Field
+//                 _buildInputField(
+//                   controller: _emailController,
+//                   hintText: 'البريد الالكتروني',
+//                   obscureText: false,
+//                 ),
+//                 const SizedBox(height: 15),
+//                 // Password Field
+//                 _buildInputField(
+//                   controller: _passwordController,
+//                   hintText: 'كلمة المرور',
+//                   obscureText: true,
+//                 ),
+//                 const SizedBox(height: 15),
+//                 // Confirm Password
+//                 _buildInputField(
+//                   controller: _confirmPasswordController,
+//                   hintText: 'تأكيد كلمة المرور',
+//                   obscureText: true,
+//                 ),
+//                 const SizedBox(height: 30),
+//                 // Sign Up Button
+//                 Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 25),
+//                   child: GestureDetector(
+//                     onTap: () async {
+//                       if (await signUp()) {
+//                         Navigator.pushReplacementNamed(context, 'tabscreen');
+//                       }
+//                     },
+//                     child: Container(
+//                       padding: const EdgeInsets.all(16),
+//                       decoration: BoxDecoration(
+//                         color: Colors.amber[800],
+//                         borderRadius: BorderRadius.circular(12),
+//                       ),
+//                       child: Center(
+//                         child: Text(
+//                           'حفظ',
+//                           style: TextStyle(
+//                             fontFamily: 'ElMessiri',
+//                             color: Colors.white,
+//                             fontWeight: FontWeight.bold,
+//                             fontSize: 18,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//                 // ),
+//                 const SizedBox(height: 20),
+//                 // Login Link
+//                 Row(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     Text(
+//                       'العودة لتسجيل الدخول ؟ ',
+//                       style: GoogleFonts.robotoCondensed(),
+//                     ),
+//                     GestureDetector(
+//                       onTap: () => Navigator.pushNamed(context, 'login'),
+//                       child: Row(
+//                         mainAxisAlignment: MainAxisAlignment.start,
+//                         children: [
+//                           Text(
+//                             'سجل الدخول ',
+//                             style: GoogleFonts.robotoCondensed(
+//                               color: Colors.blue[700],
+//                               fontWeight: FontWeight.bold,
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildInputField({
+//     required TextEditingController controller,
+//     required String hintText,
+//     required bool obscureText,
+//   }) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 25),
+//       child: Container(
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(12),
+//         ),
+//         child: Padding(
+//           padding: const EdgeInsets.symmetric(horizontal: 20),
+//           child: TextField(
+//             controller: controller,
+//             obscureText: obscureText,
+//             decoration: InputDecoration(
+//               border: InputBorder.none,
+//               hintText: hintText,
+//               hintStyle: GoogleFonts.robotoCondensed(),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+import 'package:firebase_auth/firebase_auth.dart'; // استيراد مكتبة Firebase للمصادقة
+import 'package:flutter/material.dart'; // استيراد عناصر الواجهة في Flutter
+import 'package:google_fonts/google_fonts.dart'; // استيراد خطوط Google
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+  // تعريف صفحة تسجيل مستخدم بحالة متغيرة
+  const SignupScreen({super.key}); // المُنشئ
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<SignupScreen> createState() => _SignupScreenState(); // ربط الشاشة بالحالة
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController(); // تم التصحيح هنا
-  final _confirmPasswordController = TextEditingController(); // تم التصحيح هنا
+  final _emailController =
+      TextEditingController(); // وحدة تحكم لإدخال البريد الإلكتروني
+  final _passwordController = TextEditingController(); // وحدة تحكم لكلمة المرور
+  final _confirmPasswordController =
+      TextEditingController(); // وحدة تحكم لتأكيد كلمة المرور
 
   Future<bool> signUp() async {
+    // دالة تسجيل المستخدم
     try {
       if (passwordConfirmed() && _fieldsAreValid()) {
+        // التأكد من صحة البيانات
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          // إنشاء حساب باستخدام Firebase
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
-        return true;
+        return true; // تم التسجيل بنجاح
       }
-      return false;
+      return false; // لم يتم التسجيل
     } on FirebaseAuthException catch (e) {
-      String errorMessage = 'An error occurred';
+      // التقاط أخطاء Firebase
+      String errorMessage = 'An error occurred'; // رسالة افتراضية
       if (e.code == 'weak-password') {
-        errorMessage = 'Password is too weak';
+        errorMessage = 'Password is too weak'; // كلمة المرور ضعيفة
       } else if (e.code == 'email-already-in-use') {
-        errorMessage = 'Email is already registered';
+        errorMessage = 'تم انشاء حساب'; // البريد مستخدم من قبل
       }
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(errorMessage)));
+      ).showSnackBar(SnackBar(content: Text(errorMessage))); // عرض رسالة الخطأ
       return false;
     }
   }
 
   bool passwordConfirmed() {
+    // التحقق من تطابق كلمتي المرور
     return _passwordController.text.trim() ==
         _confirmPasswordController.text.trim();
   }
 
   bool _fieldsAreValid() {
+    // التحقق من ملء جميع الحقول
     return _emailController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty &&
         _confirmPasswordController.text.isNotEmpty;
@@ -51,6 +258,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   void dispose() {
+    // تحرير الموارد عند انتهاء الاستخدام
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -60,64 +268,82 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      // بناء الهيكل الرئيسي للتطبيق
+      backgroundColor: Colors.grey[300], // لون الخلفية
       body: SafeArea(
+        // تجنب التصادم مع شريط الإشعارات
         child: Center(
           child: SingleChildScrollView(
+            // التمرير عند امتلاء الشاشة
             child: Column(
+              // عرض العناصر عموديًا
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset('images/Logo.png', height: 180),
-                const SizedBox(height: 20),
+                Image.asset('images/Logo.png', height: 180), // شعار التطبيق
+                const SizedBox(height: 20), // مسافة بين العناصر
                 Text(
-                  'تسجيل',
-                  style: GoogleFonts.robotoCondensed(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
+                  'تسجيل', // عنوان الصفحة
+                  style: TextStyle(
+                    fontFamily: 'ElMessiri',
+                    fontSize: 18,
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'انشاء حسابك',
-                  style: GoogleFonts.robotoCondensed(fontSize: 18),
+                  'انشاء حسابك', // وصف توضيحي
+                  style: TextStyle(
+                    fontFamily: 'ElMessiri',
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
                 ),
                 const SizedBox(height: 30),
 
-                // Email Field
+                // حقل البريد الإلكتروني
                 _buildInputField(
                   controller: _emailController,
                   hintText: 'البريد الالكتروني',
                   obscureText: false,
                 ),
                 const SizedBox(height: 15),
-                // Password Field
+
+                // حقل كلمة المرور
                 _buildInputField(
                   controller: _passwordController,
                   hintText: 'كلمة المرور',
                   obscureText: true,
                 ),
                 const SizedBox(height: 15),
-                // Confirm Password
+
+                // حقل تأكيد كلمة المرور
                 _buildInputField(
                   controller: _confirmPasswordController,
                   hintText: 'تأكيد كلمة المرور',
                   obscureText: true,
                 ),
                 const SizedBox(height: 30),
-                // Sign Up Button
+
+                // زر التسجيل
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
                   child: GestureDetector(
                     onTap: () async {
                       if (await signUp()) {
-                        Navigator.pushReplacementNamed(context, 'tabscreen');
+                        // عند نجاح التسجيل
+                        Navigator.pushReplacementNamed(
+                          context,
+                          'tabscreen',
+                        ); // الانتقال لصفحة التطبيق الرئيسية
                       }
                     },
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.amber[800],
-                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.amber[800], // لون الزر
+                        borderRadius: BorderRadius.circular(
+                          12,
+                        ), // تدوير الزوايا
                       ),
                       child: Center(
                         child: Text(
@@ -133,9 +359,10 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                 ),
-                // ),
+
                 const SizedBox(height: 20),
-                // Login Link
+
+                // رابط الرجوع لتسجيل الدخول
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -144,9 +371,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       style: GoogleFonts.robotoCondensed(),
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.pushNamed(context, 'login'),
+                      onTap:
+                          () => Navigator.pushNamed(
+                            context,
+                            'login',
+                          ), // الانتقال لصفحة تسجيل الدخول
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
                             'سجل الدخول ',
@@ -168,6 +398,7 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
+  // دالة لبناء حقول الإدخال
   Widget _buildInputField({
     required TextEditingController controller,
     required String hintText,
@@ -183,8 +414,8 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: TextField(
-            controller: controller,
-            obscureText: obscureText,
+            controller: controller, // ربط الحقل بالوحدة
+            obscureText: obscureText, // إخفاء النص إن كان كلمة مرور
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: hintText,
