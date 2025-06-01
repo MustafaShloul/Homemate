@@ -4,12 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class GenerateReportScreen extends StatelessWidget {
   const GenerateReportScreen({super.key});
 
+  // دالة لجلب بيانات الخدمات من مجموعة 'services' في Firestore
   Future<List<Map<String, dynamic>>> _fetchServices() async {
+    // استدعاء بيانات جميع المستندات في مجموعة services
     final querySnapshot =
         await FirebaseFirestore.instance.collection('services').get();
 
+    // تحويل كل مستند إلى خريطة تحتوي اسم المزود والوصف مع تعيين قيم افتراضية إذا لم تكن موجودة
     return querySnapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
+      final data = doc.data();
       return {
         'providerName': data['providerName'] ?? 'مجهول',
         'description': data['description'] ?? 'بدون وصف',
@@ -22,22 +25,27 @@ class GenerateReportScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('تقرير الخدمات')),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _fetchServices(),
+        future: _fetchServices(), // تنفيذ جلب البيانات
         builder: (context, snapshot) {
+          // أثناء تحميل البيانات، عرض مؤشر تحميل دائري
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
+          // إذا حدث خطأ أثناء جلب البيانات، عرض رسالة الخطأ
           if (snapshot.hasError) {
             return Center(child: Text('حدث خطأ: ${snapshot.error}'));
           }
 
+          // استلام البيانات أو قائمة فارغة إذا لم يكن هناك بيانات
           final services = snapshot.data ?? [];
 
+          // إذا لم توجد خدمات، عرض رسالة مناسبة
           if (services.isEmpty) {
             return const Center(child: Text('لا توجد خدمات مخزنة حالياً.'));
           }
 
+          // عرض قائمة من البطاقات لكل خدمة مع اسم المزود والوصف
           return ListView.builder(
             itemCount: services.length,
             itemBuilder: (context, index) {
