@@ -5,30 +5,31 @@ class FavoritesService {
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
 
-  // Get reference to current user's favorites collection
+  // دالة ترجع مرجع (Reference) إلى مجموعة "الخدمات المفضلة" للمستخدم الحالي في Firestore
   CollectionReference get _favoritesRef {
     final userId = _auth.currentUser?.uid;
     if (userId == null) {
+      // في حالة عدم وجود مستخدم مسجل الدخول، نرمي استثناء
       throw Exception('User not authenticated');
     }
     return _firestore
         .collection('users')
         .doc(userId)
-        .collection('favorite_services');
+        .collection('favorite_services'); // مجموعة فرعية تخزن الخدمات المفضلة
   }
 
-  /// Add service to favorites
+  /// إضافة خدمة إلى المفضلة
   Future<void> addToFavorites(String serviceId) async {
     try {
       await _favoritesRef.doc(serviceId).set({
-        'addedAt': FieldValue.serverTimestamp(),
+        'addedAt': FieldValue.serverTimestamp(), // تاريخ الإضافة (وقت الخادم)
       });
     } catch (e) {
       print('Error adding to favorites: $e');
     }
   }
 
-  /// Remove service from favorites
+  /// إزالة خدمة من المفضلة
   Future<void> removeFromFavorites(String serviceId) async {
     try {
       await _favoritesRef.doc(serviceId).delete();
@@ -37,7 +38,7 @@ class FavoritesService {
     }
   }
 
-  /// Check if a service is in favorites
+  /// التحقق ما إذا كانت الخدمة موجودة في المفضلة
   Future<bool> isFavorite(String serviceId) async {
     try {
       final doc = await _favoritesRef.doc(serviceId).get();
@@ -48,7 +49,7 @@ class FavoritesService {
     }
   }
 
-  /// Get all favorite service IDs once (non-realtime)
+  /// جلب جميع معرفات الخدمات المفضلة مرة واحدة (غير متزامن مع التغييرات الحينية)
   Future<List<String>> getFavoriteServiceIdsOnce() async {
     try {
       final snapshot = await _favoritesRef.get();
@@ -59,14 +60,14 @@ class FavoritesService {
     }
   }
 
-  /// Listen to favorite services (real-time stream)
+  /// الاستماع إلى تغييرات الخدمات المفضلة بشكل متزامن (Stream)
   Stream<List<String>> getFavoriteServiceIdsStream() {
     return _favoritesRef.snapshots().map(
       (snapshot) => snapshot.docs.map((doc) => doc.id).toList(),
     );
   }
 
-  /// Get real-time stream of favorite service IDs
+  /// طريقة أخرى لإرجاع نفس الـ Stream (يمكن حذف واحدة منها إذا أردت)
   Stream<List<String>> getFavoriteServiceIds() {
     return _favoritesRef.snapshots().map(
       (snapshot) => snapshot.docs.map((doc) => doc.id).toList(),
