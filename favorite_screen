@@ -11,51 +11,61 @@ class FavoriteServicesScreen extends StatefulWidget {
 }
 
 class _FavoriteServicesScreenState extends State<FavoriteServicesScreen> {
+  // كائن لإدارة المفضلات (إضافة، حذف، جلب)
   final FavoritesService _favoritesService = FavoritesService();
+
+  // قائمة تخزن معرفات الخدمات المفضلة
   List<String> favoriteServiceIds = [];
 
   @override
   void initState() {
     super.initState();
-    _loadFavorites();
+    _loadFavorites(); // تحميل المفضلات عند بدء الشاشة
   }
 
+  // دالة لتحميل معرفات الخدمات المفضلة من الخدمة
   Future<void> _loadFavorites() async {
     final ids = await _favoritesService.getFavoriteServiceIdsOnce();
     setState(() {
-      favoriteServiceIds = ids;
+      favoriteServiceIds = ids; // تحديث الحالة مع المعرفات
     });
   }
 
+  // دالة لتبديل حالة المفضلة (إضافة أو إزالة)
   void _toggleFavorite(String serviceId) async {
     if (favoriteServiceIds.contains(serviceId)) {
       await _favoritesService.removeFromFavorites(serviceId);
     } else {
       await _favoritesService.addToFavorites(serviceId);
     }
-    _loadFavorites();
+    _loadFavorites(); // تحديث القائمة بعد التغيير
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<String>>(
+      // الاستماع لتغييرات المفضلات بشكل لحظي
       stream: _favoritesService.getFavoriteServiceIds(),
       builder: (context, snapshot) {
         final favoriteIds = snapshot.data ?? [];
 
+        // إذا لم تكن هناك خدمات مفضلة
         if (favoriteIds.isEmpty) {
           return const Center(child: Text("No favorite services yet."));
         }
 
+        // جلب جميع الخدمات من قاعدة البيانات
         return FutureBuilder<QuerySnapshot>(
           future: FirebaseFirestore.instance.collection('services').get(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) return const CircularProgressIndicator();
+            if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
             final allServices = snapshot.data!.docs;
-            final favoriteServices =
-                allServices.where((s) => favoriteIds.contains(s.id)).toList();
 
+            // تصفية الخدمات لتشمل فقط المفضلة
+            final favoriteServices = allServices.where((s) => favoriteIds.contains(s.id)).toList();
+
+            // عرض قائمة الخدمات المفضلة باستخدام ListView
             return ListView.builder(
               itemCount: favoriteServices.length,
               itemBuilder: (ctx, index) {
