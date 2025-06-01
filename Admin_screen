@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // للوصول إلى بيانات Firestore
 
 class AdminScreen extends StatefulWidget {
   const AdminScreen({super.key});
@@ -9,45 +9,48 @@ class AdminScreen extends StatefulWidget {
 }
 
 class _AdminScreenState extends State<AdminScreen> {
+  // دالة لتحديث حالة الخدمة (تم قبولها أو رفضها)
   Future<void> _updateServiceStatus(String serviceId, String status) async {
     try {
       await FirebaseFirestore.instance
-          .collection('services')
-          .doc(serviceId)
-          .update({'status': status});
-      ScaffoldMessenger.of(
-        // ignore: use_build_context_synchronously
-        context,
-      ).showSnackBar(SnackBar(content: Text('Service $status successfully.')));
+          .collection('services') // الوصول إلى مجموعة الخدمات
+          .doc(serviceId) // تحديد الخدمة حسب ID
+          .update({'status': status}); // تحديث الحالة
+
+      // إشعار بنجاح العملية
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Service $status successfully.')),
+      );
     } catch (e) {
-      print('Error updating service: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error updating service status.')));
+      print('Error updating service: $e'); // في حال حدوث خطأ
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating service status.')),
+      );
     }
   }
 
+  // دالة تسجيل الخروج
   void _logout() {
     Navigator.pushReplacementNamed(context, 'login');
   }
 
+  // دالة توليد تقرير وهمي (نافذة منبثقة فقط)
   void _generateReport() {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Report Generated'),
-            content: const Text('Service report generated successfully.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, 'generate_report');
-                },
-
-                child: const Text('OK'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Report Generated'),
+        content: const Text('Service report generated successfully.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, 'generate_report'); // الانتقال لصفحة التقرير
+            },
+            child: const Text('OK'),
           ),
+        ],
+      ),
     );
   }
 
@@ -55,45 +58,48 @@ class _AdminScreenState extends State<AdminScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Admin Dashboard')),
+
+      // الاستماع للتغييرات على مجموعة الخدمات التي حالتها "pending"
       body: StreamBuilder<QuerySnapshot>(
-        stream:
-            FirebaseFirestore.instance
-                .collection('services')
-                .where('status', isEqualTo: 'pending')
-                .snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('services')
+            .where('status', isEqualTo: 'pending') // فقط الطلبات المعلقة
+            .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator()); // جاري التحميل
           }
 
           final services = snapshot.data!.docs;
 
           if (services.isEmpty) {
-            return const Center(child: Text('No pending services.'));
+            return const Center(child: Text('No pending services.')); // لا توجد خدمات
           }
 
+          // عرض الخدمات على شكل قائمة
           return ListView.builder(
             itemCount: services.length,
             itemBuilder: (context, index) {
-              final doc = services[index];
+              final doc = services[index]; // كل مستند خدمة
               final data = doc.data() as Map<String, dynamic>;
+
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 child: ListTile(
                   title: Text(data['providerName'] ?? 'مقدم الخدمة غير معروف'),
                   subtitle: Text(data['description'] ?? 'No Description'),
+
+                  // أزرار القبول والرفض
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.check, color: Colors.green),
-                        onPressed:
-                            () => _updateServiceStatus(doc.id, 'accepted'),
+                        onPressed: () => _updateServiceStatus(doc.id, 'accepted'),
                       ),
                       IconButton(
                         icon: const Icon(Icons.close, color: Colors.red),
-                        onPressed:
-                            () => _updateServiceStatus(doc.id, 'rejected'),
+                        onPressed: () => _updateServiceStatus(doc.id, 'rejected'),
                       ),
                     ],
                   ),
@@ -103,6 +109,8 @@ class _AdminScreenState extends State<AdminScreen> {
           );
         },
       ),
+
+      // أزرار عائمة للتقرير والخروج
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
