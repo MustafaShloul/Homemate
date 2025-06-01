@@ -6,7 +6,9 @@ class SettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // لم يتم استخدام AppBar هنا، لكنه ممكن إضافته إذا أردت
       // appBar: AppBar(title: const Text('الاعدادات')),
+
       body: Center(
         child: Container(
           width: 300,
@@ -15,7 +17,7 @@ class SettingScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(15),
-            boxShadow: [
+            boxShadow: [  // إضافة ظل للعنصر ليظهر بشكل مرتفع وأنيق
               BoxShadow(
                 color: Colors.grey.withOpacity(0.3),
                 spreadRadius: 3,
@@ -25,11 +27,11 @@ class SettingScreen extends StatelessWidget {
             ],
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center, // محاذاة المحتويات في المنتصف عمودياً
             children: [
+              // زر "حول" للتنقل إلى شاشة معلومات عن التطبيق
               ElevatedButton(
                 onPressed: () {
-                  // Add about screen navigation
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -52,10 +54,12 @@ class SettingScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
+
               const SizedBox(height: 20),
+
+              // زر تسجيل الخروج مع تأكيد قبل الإجراء
               ElevatedButton(
                 onPressed: () {
-                  // Add logout logic
                   _showLogoutDialog(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -80,32 +84,33 @@ class SettingScreen extends StatelessWidget {
     );
   }
 
+  // دالة لإظهار مربع حوار (Dialog) للتأكيد قبل تسجيل الخروج
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text('تسجيل خروج '),
-            content: const Text('هل انت متأكد من الخروج '),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('الغاء'),
-              ),
-              TextButton(
-                onPressed: () {
-                  // Add actual logout logic here
-                  Navigator.popUntil(context, (route) => route.isFirst);
-                },
-                child: const Text('خروج'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('تسجيل خروج'),
+        content: const Text('هل انت متأكد من الخروج؟'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), // إلغاء العملية وإغلاق مربع الحوار
+            child: const Text('الغاء'),
           ),
+          TextButton(
+            onPressed: () {
+              // من هنا يمكن إضافة منطق تسجيل الخروج الفعلي
+              // حالياً يتم الانتقال إلى شاشة تسجيل الدخول فقط
+              Navigator.of(context).pushNamed('login');
+            },
+            child: const Text('خروج'),
+          ),
+        ],
+      ),
     );
   }
 }
 
-// Example About Screen
+// شاشة "عن التطبيق" التي تعرض معلومات عنه
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
@@ -116,7 +121,9 @@ class AboutScreen extends StatelessWidget {
       body: const Padding(
         padding: EdgeInsets.all(20),
         child: Text(
-          ' تطبيقنا يسعى الى توفير جميع الخدمات التي تخص منزلك من تنظيف وصيانة والاهتمام بالمرافق ,وذلك بيد مهنيين ذو كفاءة واحترافية عالية والأهم من ذلك بيتك في أمان \n \n\n\nاذا كنت بحاجة مساعدة يرجى التواصل معنا Homemate@gmail.com',
+          'تطبيقنا يسعى الى توفير جميع الخدمات التي تخص منزلك من تنظيف وصيانة والاهتمام بالمرافق ,'
+          ' وذلك بيد مهنيين ذو كفاءة واحترافية عالية والأهم من ذلك بيتك في أمان.\n\n\n'
+          'اذا كنت بحاجة مساعدة يرجى التواصل معنا Homemate@gmail.com',
           style: TextStyle(fontSize: 18, fontFamily: 'ElMessiri'),
         ),
       ),
