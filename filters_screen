@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 
 class FiltersScreen extends StatefulWidget {
-  static const screenRoute = '/filters';
+  static const screenRoute = '/filters';  // مسار الشاشة في التنقل
 
+  // دالة لاستقبال الفلاتر المختارة من الشاشة الأب
   final void Function(Map<String, bool>) saveFilters;
+  // الفلاتر الحالية لتبدأ الشاشة بها
   final Map<String, bool> currentFilters;
+
+  // المُنشئ يأخذ الفلاتر الحالية ودالة الحفظ
   const FiltersScreen(this.currentFilters, this.saveFilters, {super.key});
 
   @override
@@ -12,23 +16,26 @@ class FiltersScreen extends StatefulWidget {
 }
 
 class FiltersScreenState extends State<FiltersScreen> {
+  // حالات الفلاتر (مناطق جغرافية هنا)
   var _irbid = false;
   var _amman = false;
   var _aqaba = false;
 
   @override
   initState() {
+    // نهيء القيم الابتدائية بناءً على الفلاتر المرسلة للشاشة
     _irbid = widget.currentFilters['irbid'] ?? false;
     _amman = widget.currentFilters['amman'] ?? false;
     _aqaba = widget.currentFilters['aqaba'] ?? false;
     super.initState();
   }
 
+  // دالة لبناء كل عنصر تبديل (Switch) مع عنوان ووصف
   SwitchListTile BuildSwitchListTile(
-    String title,
-    String subtitle,
-    bool currentValue,
-    ValueChanged<bool> updateValue,
+    String title,           // العنوان (مثلاً: "إربد")
+    String subtitle,        // الوصف أسفل العنوان
+    bool currentValue,      // القيمة الحالية للمفتاح (مفعّل أو معطّل)
+    ValueChanged<bool> updateValue,  // دالة تحديث القيمة عند التغيير
   ) {
     return SwitchListTile(
       title: Text(
@@ -37,7 +44,7 @@ class FiltersScreenState extends State<FiltersScreen> {
       ),
       subtitle: Text(subtitle),
       value: currentValue,
-      onChanged: updateValue,
+      onChanged: updateValue,  // عند تغيير التبديل ينفذ الدالة المرسلة
     );
   }
 
@@ -50,6 +57,7 @@ class FiltersScreenState extends State<FiltersScreen> {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () {
+              // عند الضغط على زر الحفظ، نجمع الفلاتر الحالية ونرسلها للشاشة الأب
               final selectedFilters = {
                 'Irbid': _irbid,
                 'Amman': _amman,
@@ -62,7 +70,7 @@ class FiltersScreenState extends State<FiltersScreen> {
       ),
       body: Column(
         children: [
-          SizedBox(height: 50),
+          SizedBox(height: 50), // مسافة من الأعلى
           Expanded(
             child: ListView(
               children: [
@@ -72,7 +80,7 @@ class FiltersScreenState extends State<FiltersScreen> {
                   _irbid,
                   (newValue) {
                     setState(() {
-                      _irbid = newValue;
+                      _irbid = newValue;  // تحديث قيمة التبديل وإعادة البناء
                     });
                   },
                 ),
