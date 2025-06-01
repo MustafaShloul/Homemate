@@ -1,32 +1,362 @@
-// تأكد من المسار الصحيح لـ LoginScreen
+// // تأكد من المسار الصحيح لـ LoginScreen
+// import 'package:flutter/material.dart';
+
+// class WelcomScreen extends StatefulWidget {
+//   static String id = 'welcomScreen';
+
+//   const WelcomScreen({super.key});
+
+//   @override
+//   // ignore: library_private_types_in_public_api
+//   _WelcomScreenState createState() => _WelcomScreenState();
+// }
+
+// class _WelcomScreenState extends State<WelcomScreen> {
+//   PageController nextpage = PageController();
+//   int pagenumber = 0;
+
+//   @override
+//   void dispose() {
+//     nextpage.dispose();
+//     super.dispose();
+//   }
+
+//   void onPageChanged(int value) {
+//     setState(() {
+//       pagenumber = value;
+//     });
+//   }
+
+//   Widget dotpageview() {
+//     return Builder(
+//       builder: ((context) {
+//         return Padding(
+//           padding: const EdgeInsets.only(left: 16),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.start,
+//             children: [
+//               for (int i = 0; i < 3; i++)
+//                 Container(
+//                   margin: const EdgeInsets.symmetric(horizontal: 5),
+//                   width: i == pagenumber ? 25 : 6,
+//                   height: 6,
+//                   decoration: BoxDecoration(
+//                     borderRadius: BorderRadius.circular(50),
+//                     color:
+//                         i == pagenumber
+//                             ? const Color(0XffB73B67)
+//                             : const Color.fromARGB(255, 107, 46, 67),
+//                   ),
+//                 ),
+//             ],
+//           ),
+//         );
+//       }),
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       // استخدام لون ثابت للخلفية لضمان التناسق
+//       backgroundColor: const Color(
+//         0xFFFFD700,
+//       ), // مثال: لون أصفر مطابق للصورة السابقة
+//       body: PageView(
+//         onPageChanged: onPageChanged,
+//         controller: nextpage,
+//         children: [
+//           // Page 1
+//           Column(
+//             children: [
+//               const SizedBox(height: 90),
+//               // Row(
+//               //   mainAxisAlignment: MainAxisAlignment.end,
+//               //   children: [
+//               //     Padding(
+//               //       padding: const EdgeInsets.only(right: 16),
+//               //       child: GestureDetector(
+//               //         onTap: () {
+//               //           // الانتقال إلى شاشة تسجيل الدخول عند النقر على "skip"
+//               //           Navigator.pushNamed(context, LoginScreen.id);
+//               //         },
+//               //       ),
+//               //       // child: const Text(
+//               //       //   'skip',
+//               //       //   textAlign: TextAlign.right,
+//               //       //   style: TextStyle(
+//               //       //     color: Colors.black,
+//               //       //     fontSize: 18,
+//               //       //     fontFamily: 'ElMessiri',
+//               //       //   ),
+//               //     ),
+//               //     // ),
+//               //   ],
+//               // ),
+//               const SizedBox(height: 70),
+//               const CircleAvatar(
+//                 radius: 152,
+//                 backgroundColor: Colors.white,
+//                 child: CircleAvatar(
+//                   radius: 150,
+//                   backgroundImage: AssetImage('images/C2.png'),
+//                 ),
+//               ),
+//               const SizedBox(height: 30),
+//               const Text(
+//                 ' Homemate أهلاً بك في',
+//                 textAlign: TextAlign.center,
+//                 style: TextStyle(
+//                   color: Colors.white,
+//                   fontSize: 32,
+//                   fontFamily: 'ElMessiri',
+//                 ),
+//               ),
+//               const SizedBox(height: 16),
+//               const Text(
+//                 'الحل الأمثل لجميع احتياجات منزلك.',
+//                 textAlign: TextAlign.center,
+//                 style: TextStyle(
+//                   color: Colors.white,
+//                   fontSize: 25,
+//                   fontFamily: 'ElMessiri',
+//                 ),
+//               ),
+//               const SizedBox(height: 30),
+//               Padding(
+//                 padding: const EdgeInsets.all(20),
+//                 child: Align(
+//                   alignment: Alignment.bottomRight,
+//                   child: ElevatedButton(
+//                     onPressed: () {
+//                       // الانتقال إلى الصفحة التالية في PageView
+//                       nextpage.animateToPage(
+//                         1,
+//                         duration: const Duration(milliseconds: 700),
+//                         curve: Curves.easeIn,
+//                       );
+//                     },
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: Colors.white,
+//                       shape: const CircleBorder(),
+//                       padding: const EdgeInsets.all(20),
+//                     ),
+//                     child: const Icon(
+//                       Icons.arrow_forward,
+//                       color: Color(0XffB73B67),
+//                       size: 30,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               dotpageview(),
+//             ],
+//           ),
+//           // Page 2
+//           Column(
+//             children: [
+//               const SizedBox(height: 90),
+//               // Row(
+//               //   mainAxisAlignment: MainAxisAlignment.end,
+//               //   children: [
+//               //     Padding(
+//               //       padding: const EdgeInsets.only(right: 16),
+//               //       child: GestureDetector(
+//               //         onTap: () {
+//               //           // الانتقال إلى شاشة تسجيل الدخول عند النقر على "skip"
+//               //           Navigator.pushNamed(context, LoginScreen.id);
+//               //         },
+//               //         child: const Text(
+//               //           'skip',
+//               //           textAlign: TextAlign.right,
+//               //           style: TextStyle(color: Colors.black, fontSize: 18),
+//               //         ),
+//               //       ),
+//               //     ),
+//               //   ],
+//               // ),
+//               const SizedBox(height: 10),
+//               const CircleAvatar(
+//                 radius: 152,
+//                 backgroundColor: Colors.white,
+//                 child: CircleAvatar(
+//                   radius: 150,
+//                   backgroundImage: AssetImage('images/S1.jpg'),
+//                 ),
+//               ),
+//               const SizedBox(height: 30),
+//               const Text(
+//                 '؟ Homemate ما هو ',
+//                 textAlign: TextAlign.center,
+//                 style: TextStyle(
+//                   color: Colors.white,
+//                   fontSize: 32,
+//                   fontFamily: 'ElMessiri',
+//                 ),
+//               ),
+//               const SizedBox(height: 16),
+//               const Padding(
+//                 padding: EdgeInsets.all(8.0),
+//                 child: Text(
+//                   'يوصلك بمهنيين ذوي خبرة لجميع احتياجات منزلك.',
+//                   textAlign: TextAlign.center,
+//                   style: TextStyle(
+//                     color: Colors.white,
+//                     fontSize: 25,
+//                     fontFamily: 'ElMessiri',
+//                   ),
+//                 ),
+//               ),
+//               const SizedBox(height: 10),
+//               Padding(
+//                 padding: const EdgeInsets.all(20),
+//                 child: Align(
+//                   alignment: Alignment.bottomRight,
+//                   child: ElevatedButton(
+//                     onPressed: () {
+//                       // الانتقال إلى الصفحة التالية في PageView
+//                       nextpage.animateToPage(
+//                         2, // الانتقال إلى الصفحة الثالثة (مؤشر 2)
+//                         duration: const Duration(milliseconds: 700),
+//                         curve: Curves.easeIn,
+//                       );
+//                     },
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: Colors.white,
+//                       shape: const CircleBorder(),
+//                       padding: const EdgeInsets.all(20),
+//                     ),
+//                     child: const Icon(
+//                       Icons.arrow_forward,
+//                       color: Color(0XffB73B67),
+//                       size: 30,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               dotpageview(),
+//             ],
+//           ),
+//           // Page 3 (Last Page)
+//           Column(
+//             children: [
+//               const SizedBox(height: 90),
+//               // Row(
+//               //   mainAxisAlignment: MainAxisAlignment.end,
+//               //   children: [
+//               //     Padding(
+//               //       padding: const EdgeInsets.only(right: 16),
+//               //       child: GestureDetector(
+//               //         onTap: () {
+//               //           // الانتقال إلى شاشة تسجيل الدخول عند النقر على "skip"
+//               //           Navigator.pushNamed(context, LoginScreen.id);
+//               //         },
+//               //         child: const Text(
+//               //           'skip',
+//               //           textAlign: TextAlign.right,
+//               //           style: TextStyle(color: Colors.black, fontSize: 18),
+//               //         ),
+//               //       ),
+//               //     ),
+//               //   ],
+//               // ),
+//               const SizedBox(height: 70),
+//               const CircleAvatar(
+//                 radius: 152,
+//                 backgroundColor: Colors.white,
+//                 child: CircleAvatar(
+//                   radius: 150,
+//                   backgroundImage: AssetImage('images/C3.png'),
+//                 ),
+//               ),
+//               const SizedBox(height: 30),
+//               const Text(
+//                 'استكشف خدماتنا ',
+//                 textAlign: TextAlign.center,
+//                 style: TextStyle(
+//                   color: Colors.white,
+//                   fontSize: 32,
+//                   fontFamily: 'ElMessiri',
+//                 ),
+//               ),
+//               const SizedBox(height: 16),
+//               const Padding(
+//                 padding: EdgeInsets.all(8.0),
+//                 child: Text(
+//                   'اكتشف خدمات ميكانيكية متنوعة مصممة خصيصًا لتلبية احتياجاتك',
+//                   textAlign: TextAlign.center,
+//                   style: TextStyle(
+//                     color: Colors.white,
+//                     fontSize: 25,
+//                     fontFamily: 'Kalam',
+//                   ),
+//                 ),
+//               ),
+//               const SizedBox(height: 10),
+//               Padding(
+//                 padding: const EdgeInsets.all(20),
+//                 child: Align(
+//                   alignment: Alignment.bottomRight,
+//                   child: ElevatedButton(
+//                     onPressed: () {
+//                       // *** هذا هو التغيير الرئيسي ***
+//                       // الانتقال إلى شاشة تسجيل الدخول عند النقر على زر التقدم في الصفحة الأخيرة
+//                       // استخدام pushNamed لمنع العودة إلى شاشات الترحيب بعد تسجيل الدخول
+//                       Navigator.of(context).pushNamed('login');
+//                       ElevatedButton.styleFrom(
+//                         backgroundColor: Colors.white,
+//                         shape: const CircleBorder(),
+//                         padding: const EdgeInsets.all(20),
+//                       );
+//                     },
+//                     child: const Icon(
+//                       Icons.arrow_forward,
+//                       color: Color(0XffB73B67),
+//                       size: 30,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               dotpageview(),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+// استيراد مكتبة Flutter الأساسية لإنشاء واجهات المستخدم
 import 'package:flutter/material.dart';
 
+// تعريف كلاس الشاشة الرئيسية للترحيب (كـ StatefulWidget لاحتياجها لتحديث الحالة)
 class WelcomScreen extends StatefulWidget {
-  static String id = 'welcomScreen';
+  static String id =
+      'welcomScreen'; // معرف فريد للشاشة يمكن استخدامه مع Navigator
 
-  const WelcomScreen({super.key});
+  const WelcomScreen({super.key}); // مُنشئ ثابت مع مفتاح اختياري
 
   @override
-  // ignore: library_private_types_in_public_api
-  _WelcomScreenState createState() => _WelcomScreenState();
+  _WelcomScreenState createState() => _WelcomScreenState(); // ربط الحالة بالكلاس
 }
 
 class _WelcomScreenState extends State<WelcomScreen> {
-  PageController nextpage = PageController();
-  int pagenumber = 0;
+  PageController nextpage = PageController(); // يتحكم في التنقل بين الصفحات
+  int pagenumber = 0; // لتتبع رقم الصفحة الحالية
 
   @override
   void dispose() {
-    nextpage.dispose();
+    nextpage.dispose(); // تحرير الموارد عند التخلص من الصفحة
     super.dispose();
   }
 
+  // يتم استدعاء هذا عند تغيير الصفحة لتحديث رقم الصفحة
   void onPageChanged(int value) {
     setState(() {
       pagenumber = value;
     });
   }
 
+  // إنشاء مؤشرات الصفحات (dots)
   Widget dotpageview() {
     return Builder(
       builder: ((context) {
@@ -35,17 +365,22 @@ class _WelcomScreenState extends State<WelcomScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              for (int i = 0; i < 3; i++)
+              for (int i = 0; i < 3; i++) // تكرار 3 نقاط لعدد الصفحات
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 5),
-                  width: i == pagenumber ? 25 : 6,
+                  width: i == pagenumber ? 25 : 6, // النقطة الحالية أكبر
                   height: 6,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50),
                     color:
                         i == pagenumber
-                            ? const Color(0XffB73B67)
-                            : const Color.fromARGB(255, 107, 46, 67),
+                            ? const Color(0XffB73B67) // لون النقطة النشطة
+                            : const Color.fromARGB(
+                              255,
+                              107,
+                              46,
+                              67,
+                            ), // لون باهت للبقية
                   ),
                 ),
             ],
@@ -58,41 +393,16 @@ class _WelcomScreenState extends State<WelcomScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // استخدام لون ثابت للخلفية لضمان التناسق
-      backgroundColor: const Color(
-        0xFFFFD700,
-      ), // مثال: لون أصفر مطابق للصورة السابقة
+      backgroundColor: Colors.amber[300], // لون خلفية أصفر للشاشة
       body: PageView(
-        onPageChanged: onPageChanged,
-        controller: nextpage,
+        onPageChanged: onPageChanged, // التغيير بين الصفحات
+        controller: nextpage, // استخدام الـ PageController
         children: [
-          // Page 1
+          // الصفحة الأولى
           Column(
             children: [
-              const SizedBox(height: 90),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     Padding(
-              //       padding: const EdgeInsets.only(right: 16),
-              //       child: GestureDetector(
-              //         onTap: () {
-              //           // الانتقال إلى شاشة تسجيل الدخول عند النقر على "skip"
-              //           Navigator.pushNamed(context, LoginScreen.id);
-              //         },
-              //       ),
-              //       // child: const Text(
-              //       //   'skip',
-              //       //   textAlign: TextAlign.right,
-              //       //   style: TextStyle(
-              //       //     color: Colors.black,
-              //       //     fontSize: 18,
-              //       //     fontFamily: 'ElMessiri',
-              //       //   ),
-              //     ),
-              //     // ),
-              //   ],
-              // ),
+              const SizedBox(height: 90), // فراغ علوي
+              // صورة ترحيبية
               const SizedBox(height: 70),
               const CircleAvatar(
                 radius: 152,
@@ -103,6 +413,8 @@ class _WelcomScreenState extends State<WelcomScreen> {
                 ),
               ),
               const SizedBox(height: 30),
+
+              // نص ترحيبي
               const Text(
                 ' Homemate أهلاً بك في',
                 textAlign: TextAlign.center,
@@ -122,14 +434,17 @@ class _WelcomScreenState extends State<WelcomScreen> {
                   fontFamily: 'ElMessiri',
                 ),
               ),
+
               const SizedBox(height: 30),
+
+              // زر التنقل للصفحة التالية
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: ElevatedButton(
                     onPressed: () {
-                      // الانتقال إلى الصفحة التالية في PageView
+                      // الانتقال إلى الصفحة الثانية
                       nextpage.animateToPage(
                         1,
                         duration: const Duration(milliseconds: 700),
@@ -138,6 +453,7 @@ class _WelcomScreenState extends State<WelcomScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
+                      //RoundedRectangleBorder : لو حكو غيروه لمربع
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(20),
                     ),
@@ -149,33 +465,17 @@ class _WelcomScreenState extends State<WelcomScreen> {
                   ),
                 ),
               ),
-              dotpageview(),
+              dotpageview(), // عرض مؤشرات الصفحات
             ],
           ),
-          // Page 2
+
+          // الصفحة الثانية
           Column(
             children: [
               const SizedBox(height: 90),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     Padding(
-              //       padding: const EdgeInsets.only(right: 16),
-              //       child: GestureDetector(
-              //         onTap: () {
-              //           // الانتقال إلى شاشة تسجيل الدخول عند النقر على "skip"
-              //           Navigator.pushNamed(context, LoginScreen.id);
-              //         },
-              //         child: const Text(
-              //           'skip',
-              //           textAlign: TextAlign.right,
-              //           style: TextStyle(color: Colors.black, fontSize: 18),
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
               const SizedBox(height: 10),
+
+              // صورة توضيحية للخدمة
               const CircleAvatar(
                 radius: 152,
                 backgroundColor: Colors.white,
@@ -185,6 +485,8 @@ class _WelcomScreenState extends State<WelcomScreen> {
                 ),
               ),
               const SizedBox(height: 30),
+
+              // عنوان الصفحة
               const Text(
                 '؟ Homemate ما هو ',
                 textAlign: TextAlign.center,
@@ -195,6 +497,8 @@ class _WelcomScreenState extends State<WelcomScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // وصف مختصر للخدمة
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
@@ -208,15 +512,16 @@ class _WelcomScreenState extends State<WelcomScreen> {
                 ),
               ),
               const SizedBox(height: 10),
+
+              // زر التنقل للصفحة التالية
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: ElevatedButton(
                     onPressed: () {
-                      // الانتقال إلى الصفحة التالية في PageView
                       nextpage.animateToPage(
-                        2, // الانتقال إلى الصفحة الثالثة (مؤشر 2)
+                        2,
                         duration: const Duration(milliseconds: 700),
                         curve: Curves.easeIn,
                       );
@@ -234,33 +539,17 @@ class _WelcomScreenState extends State<WelcomScreen> {
                   ),
                 ),
               ),
-              dotpageview(),
+              dotpageview(), // مؤشرات الصفحات
             ],
           ),
-          // Page 3 (Last Page)
+
+          // الصفحة الثالثة الرابعة (الأخيرة)
           Column(
             children: [
               const SizedBox(height: 90),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     Padding(
-              //       padding: const EdgeInsets.only(right: 16),
-              //       child: GestureDetector(
-              //         onTap: () {
-              //           // الانتقال إلى شاشة تسجيل الدخول عند النقر على "skip"
-              //           Navigator.pushNamed(context, LoginScreen.id);
-              //         },
-              //         child: const Text(
-              //           'skip',
-              //           textAlign: TextAlign.right,
-              //           style: TextStyle(color: Colors.black, fontSize: 18),
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
               const SizedBox(height: 70),
+
+              // صورة للخدمات
               const CircleAvatar(
                 radius: 152,
                 backgroundColor: Colors.white,
@@ -270,6 +559,8 @@ class _WelcomScreenState extends State<WelcomScreen> {
                 ),
               ),
               const SizedBox(height: 30),
+
+              // عنوان الصفحة
               const Text(
                 'استكشف خدماتنا ',
                 textAlign: TextAlign.center,
@@ -280,6 +571,8 @@ class _WelcomScreenState extends State<WelcomScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // وصف الخدمات
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: Text(
@@ -293,22 +586,16 @@ class _WelcomScreenState extends State<WelcomScreen> {
                 ),
               ),
               const SizedBox(height: 10),
+
+              // زر الانتقال إلى صفحة تسجيل الدخول
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Align(
                   alignment: Alignment.bottomRight,
                   child: ElevatedButton(
                     onPressed: () {
-                      // *** هذا هو التغيير الرئيسي ***
-                      // الانتقال إلى شاشة تسجيل الدخول عند النقر على زر التقدم في الصفحة الأخيرة
-                      // استخدام pushNamed لمنع العودة إلى شاشات الترحيب بعد تسجيل الدخول
+                      // الانتقال إلى شاشة تسجيل الدخول
                       Navigator.of(context).pushNamed('login');
-                      style:
-                      ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(20),
-                      );
                     },
                     child: const Icon(
                       Icons.arrow_forward,
@@ -318,7 +605,7 @@ class _WelcomScreenState extends State<WelcomScreen> {
                   ),
                 ),
               ),
-              dotpageview(),
+              dotpageview(), // مؤشرات الصفحات
             ],
           ),
         ],
