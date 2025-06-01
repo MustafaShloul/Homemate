@@ -1,22 +1,22 @@
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:homemate/models/category.dart';
-import 'package:homemate/services/category_service.dart';
-import 'package:homemate/screens/tabs_screen.dart';
+import 'package:flutter/material.dart'; // مكتبة Flutter الأساسية لواجهة المستخدم
+import 'package:cloud_firestore/cloud_firestore.dart'; // للوصول إلى Firestore
+import 'package:homemate/models/category.dart'; // نموذج بيانات التصنيف
+import 'package:homemate/services/category_service.dart'; // خدمة جلب التصنيفات من قاعدة البيانات
 
 class AddService extends StatefulWidget {
-  const AddService({super.key});
+  const AddService({super.key}); // ويدجت لإضافة خدمة جديدة
 
   @override
-  _AddServiceState createState() => _AddServiceState();
+  _AddServiceState createState() => _AddServiceState(); // ربط الحالة بالويدجت
 }
 
 class _AddServiceState extends State<AddService> {
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>(); // مفتاح النموذج للتحقق من صحة البيانات
 
-  List<Category> _categories = [];
-  Category? _selectedCategory;
+  List<Category> _categories = []; // قائمة التصنيفات
+  Category? _selectedCategory; // التصنيف المحدد من المستخدم
 
+  // متحكمات لحقول الإدخال
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _providerNameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -26,20 +26,22 @@ class _AddServiceState extends State<AddService> {
   @override
   void initState() {
     super.initState();
-    _fetchCategories();
+    _fetchCategories(); // تحميل التصنيفات عند فتح الصفحة
   }
 
+  // دالة لجلب التصنيفات من الخدمة
   Future<void> _fetchCategories() async {
     try {
-      final fetched = await CategoryService().getCategories();
+      final fetched = await CategoryService().getCategories(); // جلب البيانات من الخدمة
       setState(() {
-        _categories = fetched;
+        _categories = fetched; // تحديث القائمة بالنتائج
       });
     } catch (e) {
-      print("Error fetching categories: $e");
+      print("Error fetching categories: $e"); // طباعة الخطأ في وحدة التصحيح
     }
   }
 
+  // تنظيف المتحكمات عند التخلص من الصفحة
   @override
   void dispose() {
     _titleController.dispose();
@@ -50,29 +52,32 @@ class _AddServiceState extends State<AddService> {
     super.dispose();
   }
 
+  // دالة لحفظ البيانات عند الضغط على زر "طلب"
   void _saveForm() async {
     if (_formKey.currentState!.validate()) {
       try {
         await FirebaseFirestore.instance.collection('services').add({
-          'categoryId': _selectedCategory?.id,
+          'categoryId': _selectedCategory?.id, // تخزين معرف التصنيف
           'title': _titleController.text,
           'providerName': _providerNameController.text,
           'description': _descriptionController.text,
           'phone': _phoneController.text,
           'location': _locationController.text,
-          'status': 'pending',
+          'status': 'pending', // الحالة مبدئية
         });
 
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('تمت إضافة الخدمة بنجاح')));
+        // إظهار رسالة نجاح
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('تمت إضافة الخدمة بنجاح')),
+        );
 
-        // Navigate to home page (TabsScreen)
+        // الانتقال إلى الشاشة الرئيسية (tabscreen)
         Navigator.of(context).pushReplacementNamed('tabscreen');
       } catch (e) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('فشل في الإضافة: $e')));
+        // إظهار رسالة خطأ
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('فشل في الإضافة: $e')),
+        );
       }
     }
   }
@@ -80,109 +85,119 @@ class _AddServiceState extends State<AddService> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('طلب خدمة')),
-      body:
-          _categories.isEmpty
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      DropdownButtonFormField<Category>(
-                        decoration: const InputDecoration(
-                          labelText: 'التصنيف',
-                          border: OutlineInputBorder(),
-                        ),
-                        value: _selectedCategory,
-                        items:
-                            _categories.map((Category category) {
-                              return DropdownMenuItem<Category>(
-                                value: category,
-                                child: Text(category.name),
-                              );
-                            }).toList(),
-                        onChanged: (Category? newValue) {
-                          setState(() {
-                            _selectedCategory = newValue;
-                          });
-                        },
-                        validator:
-                            (value) =>
-                                value == null ? 'يرجى اختيار التصنيف' : null,
+      appBar: AppBar(title: const Text('طلب خدمة')), // عنوان الشاشة
+      body: _categories.isEmpty
+          ? const Center(child: CircularProgressIndicator()) // في حالة تحميل التصنيفات
+          : SingleChildScrollView( // للسماح بالتمرير في حال ازدادت العناصر
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: _formKey, // ربط النموذج بمفتاح التحقق
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // قائمة منسدلة لاختيار التصنيف
+                    DropdownButtonFormField<Category>(
+                      decoration: const InputDecoration(
+                        labelText: 'التصنيف',
+                        border: OutlineInputBorder(),
                       ),
-                      const SizedBox(height: 16),
-                      // حقل جديد لاسم مقدم الخدمة
-                      TextFormField(
-                        controller: _providerNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'اسم مقدم الخدمة',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator:
-                            (value) =>
-                                value!.isEmpty ? 'ادخل اسم مقدم الخدمة' : null,
+                      value: _selectedCategory,
+                      items: _categories.map((Category category) {
+                        return DropdownMenuItem<Category>(
+                          value: category,
+                          child: Text(category.name),
+                        );
+                      }).toList(),
+                      onChanged: (Category? newValue) {
+                        setState(() {
+                          _selectedCategory = newValue;
+                        });
+                      },
+                      validator: (value) =>
+                          value == null ? 'يرجى اختيار التصنيف' : null,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // حقل إدخال اسم مقدم الخدمة
+                    TextFormField(
+                      controller: _providerNameController,
+                      decoration: const InputDecoration(
+                        labelText: 'اسم مقدم الخدمة',
+                        border: OutlineInputBorder(),
                       ),
-                      SizedBox(height: 16),
-                      TextFormField(
-                        controller: _titleController,
-                        decoration: const InputDecoration(
-                          labelText: '()عنوان الخدمة',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator:
-                            (value) =>
-                                value!.isEmpty ? 'ادخل اسم الخدمة' : null,
+                      validator: (value) =>
+                          value!.isEmpty ? 'ادخل اسم مقدم الخدمة' : null,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // حقل عنوان الخدمة
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(
+                        labelText: '()عنوان الخدمة',
+                        border: OutlineInputBorder(),
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _descriptionController,
-                        decoration: const InputDecoration(
-                          labelText: 'وصف الخدمة',
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: 3,
-                        validator:
-                            (value) =>
-                                value!.isEmpty ? 'الانشطة التي تقوم بها' : null,
+                      validator: (value) =>
+                          value!.isEmpty ? 'ادخل اسم الخدمة' : null,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // وصف الخدمة
+                    TextFormField(
+                      controller: _descriptionController,
+                      decoration: const InputDecoration(
+                        labelText: 'وصف الخدمة',
+                        border: OutlineInputBorder(),
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _phoneController,
-                        decoration: const InputDecoration(
-                          labelText: 'الهاتف',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.phone,
-                        validator:
-                            (value) =>
-                                value!.isEmpty ? 'ادخل رقم الهاتف' : null,
+                      maxLines: 3,
+                      validator: (value) =>
+                          value!.isEmpty ? 'الأنشطة التي تقوم بها' : null,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // رقم الهاتف
+                    TextFormField(
+                      controller: _phoneController,
+                      decoration: const InputDecoration(
+                        labelText: 'الهاتف',
+                        border: OutlineInputBorder(),
                       ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _locationController,
-                        decoration: const InputDecoration(
-                          labelText: 'الموقع',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator:
-                            (value) =>
-                                value!.isEmpty ? 'يرجى اختيار موقعك' : null,
+                      keyboardType: TextInputType.phone,
+                      validator: (value) =>
+                          value!.isEmpty ? 'ادخل رقم الهاتف' : null,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // الموقع
+                    TextFormField(
+                      controller: _locationController,
+                      decoration: const InputDecoration(
+                        labelText: 'الموقع',
+                        border: OutlineInputBorder(),
                       ),
-                      const SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: _saveForm,
-                        child: const Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Text('طلب'),
-                        ),
+                      validator: (value) =>
+                          value!.isEmpty ? 'يرجى اختيار موقعك' : null,
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // زر الحفظ/الإرسال
+                    ElevatedButton(
+                      onPressed: _saveForm,
+                      child: const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text('طلب'),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
+            ),
     );
   }
 }
