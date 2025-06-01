@@ -1,11 +1,14 @@
+// استيراد الحزم المطلوبة
 import 'package:flutter/material.dart';
-import 'package:homemate/screens/services_item.dart';
-import '../models/service.dart';
-import '../services/favorites_services.dart'; // 👈 import your favorite service
+import 'package:homemate/screens/services_item.dart'; // ويدجت عنصر خدمة فردية
+import '../models/service.dart'; // نموذج بيانات الخدمة
+import '../services/favorites_services.dart'; // خدمة إدارة المفضلات
 
+// تعريف الشاشة كـ StatefulWidget لأنها تحتاج إلى تتبع الحالة (مثل المفضلات)
 class CategoryServicesScreen extends StatefulWidget {
-  static const screenRoute = '/category-servicse';
-  final List<Service> availableServices;
+  static const screenRoute = '/category-servicse'; // اسم المسار لاستخدامه في التنقل
+
+  final List<Service> availableServices; // قائمة بالخدمات التي ستم تمريرها للشاشة
 
   const CategoryServicesScreen(this.availableServices, {super.key});
 
@@ -13,48 +16,56 @@ class CategoryServicesScreen extends StatefulWidget {
   State<CategoryServicesScreen> createState() => CategoryServicesScreenState();
 }
 
+// الكلاس الذي يحتفظ بحالة الشاشة
 class CategoryServicesScreenState extends State<CategoryServicesScreen> {
-  late String categoryTitle;
-  late List<Service> displayServices;
-  List<String> favoriteServiceIds = [];
+  late String categoryTitle; // عنوان التصنيف (يُعرض في شريط التطبيق)
+  late List<Service> displayServices; // الخدمات التي سيتم عرضها في الشاشة
+  List<String> favoriteServiceIds = []; // قائمة بمعرّفات الخدمات المفضّلة
 
-  final FavoritesService _favoritesService = FavoritesService();
+  final FavoritesService _favoritesService = FavoritesService(); // إنشاء كائن من خدمة المفضلات
 
   @override
   void initState() {
     super.initState();
-    _loadFavorites();
+    _loadFavorites(); // تحميل المفضلات من التخزين عند تشغيل الشاشة
   }
 
+  // دالة لتحميل المفضلات من التخزين المحلي أو قاعدة البيانات
   Future<void> _loadFavorites() async {
-    final ids = await _favoritesService.getFavoriteServiceIdsOnce();
+    final ids = await _favoritesService.getFavoriteServiceIdsOnce(); // جلب المعرفات
     setState(() {
-      favoriteServiceIds = ids;
+      favoriteServiceIds = ids; // تخزينها في الحالة
     });
   }
 
+  // دالة لتبديل حالة المفضلة عند الضغط على أيقونة القلب
   void _toggleFavorite(String serviceId) async {
     if (favoriteServiceIds.contains(serviceId)) {
-      await _favoritesService.removeFromFavorites(serviceId);
+      await _favoritesService.removeFromFavorites(serviceId); // إزالة من المفضلات
     } else {
-      await _favoritesService.addToFavorites(serviceId);
+      await _favoritesService.addToFavorites(serviceId); // إضافة إلى المفضلات
     }
-    _loadFavorites();
+    _loadFavorites(); // إعادة التحميل لتحديث الواجهة
   }
 
+  // تُنفذ عندما تتغير الـ context أو عند التنقل إلى هذه الشاشة
   @override
   void didChangeDependencies() {
     final routeArgument =
         ModalRoute.of(context)?.settings.arguments as Map<String, String>;
-    final categoryId = routeArgument['id'];
-    categoryTitle = routeArgument['title']!;
-    displayServices =
-        widget.availableServices
-            .where((service) => service.categoryId == categoryId)
-            .toList();
+
+    final categoryId = routeArgument['id']; // الحصول على معرف التصنيف
+    categoryTitle = routeArgument['title']!; // عنوان التصنيف
+
+    // تصفية الخدمات المتاحة لعرض فقط تلك التي تنتمي للتصنيف المحدد
+    displayServices = widget.availableServices
+        .where((service) => service.categoryId == categoryId)
+        .toList();
+
     super.didChangeDependencies();
   }
 
+  // بناء واجهة المستخدم
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,17 +77,17 @@ class CategoryServicesScreenState extends State<CategoryServicesScreen> {
         backgroundColor: Colors.blue,
       ),
       body: ListView.builder(
-        itemCount: displayServices.length,
+        itemCount: displayServices.length, // عدد الخدمات
         itemBuilder: (context, index) {
-          final service = displayServices[index];
+          final service = displayServices[index]; // كل خدمة على حدة
           return ServicesItem(
             id: service.id,
             title: service.title,
             phone: service.phone,
             location: service.location,
             providerName: service.providerName,
-            isFavorite: favoriteServiceIds.contains(service.id),
-            onToggleFavorite: () => _toggleFavorite(service.id),
+            isFavorite: favoriteServiceIds.contains(service.id), // هل هي مفضلة؟
+            onToggleFavorite: () => _toggleFavorite(service.id), // عند الضغط على القلب
           );
         },
       ),
