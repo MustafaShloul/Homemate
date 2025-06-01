@@ -15,13 +15,13 @@ import 'package:homemate/services/service_service.dart';
 import './screens/filters_screen.dart';
 import 'package:homemate/screens/welcome_screen.dart';
 import 'package:homemate/screens/tabs_screen.dart';
-import 'screens/category_detail_screen.dart';
+// import 'screens/category_detail_screen.dart';
 import './models/service.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized(); // التأكد من تهيئة الفلاتر قبل تشغيل التطبيق
+  await Firebase.initializeApp(); // تهيئة Firebase لبدء استخدامه
+  runApp(const MyApp()); // تشغيل التطبيق
 }
 
 class MyApp extends StatefulWidget {
@@ -32,24 +32,32 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  // خريطة الفلاتر للمناطق الجغرافية (مدن) مع قيمة بوليانية لتفعيل أو إيقاف الفلتر
   Map<String, bool> filters = {'Irbid': false, 'Amman': false, 'Aqaba': false};
+
+  // قائمة الخدمات المتاحة التي يتم تحميلها من قاعدة البيانات
   List<Service> availableServices = [];
+
+  // قائمة الخدمات المفضلة لدى المستخدم
   final List<Service> favoriteServices = [];
 
   @override
   void initState() {
     super.initState();
+
+    // الاستماع لتغير حالة تسجيل الدخول أو الخروج للمستخدم عبر FirebaseAuth
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
-        print('User is currently signed out!');
+        print('User is currently signed out!'); // المستخدم غير مسجل دخول
       } else {
-        print('User is signed in!');
+        print('User is signed in!'); // المستخدم مسجل دخول
       }
     });
 
-    _loadServices(); // initialize services on start
+    _loadServices(); // تحميل الخدمات من Firebase عند بدء التطبيق
   }
 
+  // دالة لتحميل جميع الخدمات من الخدمة ServiceService وتحديث القائمة
   Future<void> _loadServices() async {
     final allServices = await ServiceService().getServices();
     setState(() {
@@ -57,35 +65,40 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  // دالة لتغيير الفلاتر وتصفية الخدمات حسب الفلاتر المفعلة
   void changeFilters(Map<String, bool> filterData) {
     setState(() {
       filters = filterData;
-      availableServices =
-          availableServices.where((service) {
-            if (filters['Irbid'] == true && service.location != 'Irbid') {
-              return false;
-            }
-            if (filters['Amman'] == true && service.location != 'Amman') {
-              return false;
-            }
-            if (filters['Aqaba'] == true && service.location != 'Aqaba') {
-              return false;
-            }
-            return true;
-          }).toList();
+
+      // تصفية الخدمات بحيث تبقى الخدمات التي تطابق مواقع الفلاتر المفعلة فقط
+      availableServices = availableServices.where((service) {
+        if (filters['Irbid'] == true && service.location != 'Irbid') {
+          return false;
+        }
+        if (filters['Amman'] == true && service.location != 'Amman') {
+          return false;
+        }
+        if (filters['Aqaba'] == true && service.location != 'Aqaba') {
+          return false;
+        }
+        return true;
+      }).toList();
     });
   }
 
+  // دالة لإدارة الخدمات المفضلة: إضافة أو إزالة خدمة من المفضلة
   void manageFavorite(String serviceId) async {
     final existingIndex = favoriteServices.indexWhere(
       (service) => service.id == serviceId,
     );
 
     if (existingIndex >= 0) {
+      // إذا الخدمة موجودة في المفضلة، قم بإزالتها
       setState(() {
         favoriteServices.removeAt(existingIndex);
       });
     } else {
+      // إذا غير موجودة، جلب الخدمة من Firebase وإضافتها إلى المفضلة
       final service = await ServiceService().getServiceById(serviceId);
       setState(() {
         favoriteServices.add(service);
@@ -93,6 +106,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  // دالة لفحص إذا كانت خدمة معينة ضمن المفضلة
   bool isFavorite(String id) {
     return favoriteServices.any((service) => service.id == id);
   }
@@ -100,17 +114,17 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false, // إزالة علامة الـ debug من التطبيق
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
-      ],
+      ], // دعم اللغات العربية والإنجليزية
       supportedLocales: const [Locale('en', 'EN'), Locale('ar', 'AR')],
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        hintColor: Colors.amber,
-        fontFamily: 'ElMessiri',
+        primarySwatch: Colors.blue, // اللون الرئيسي للتطبيق أزرق
+        hintColor: Colors.amber, // لون التلميحات أصفر كهرماني
+        fontFamily: 'ElMessiri', // خط التطبيق
         textTheme: ThemeData.light().textTheme.copyWith(
           headlineSmall: const TextStyle(
             color: Colors.white,
@@ -126,23 +140,23 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
       ),
-      home: const WelcomScreen(),
+      home: const WelcomScreen(), // الشاشة الأولى عند بدء التطبيق
       routes: {
-        'welcome': (context) => const WelcomScreen(),
-        'login': (context) => const LoginScreen(),
-        'signup': (context) => const SignupScreen(),
-        'tabscreen': (context) => TabsScreen(favoriteServices),
-        'auth': (context) => Auth(),
-        'addservice': (context) => AddService(),
-        '/admin': (context) => AdminScreen(),
-        'categoriescreen': (context) => CategoryScreen(),
-        'generate_report': (ctx) => GenerateReportScreen(),
+        'welcome': (context) => const WelcomScreen(), // شاشة الترحيب
+        'login': (context) => const LoginScreen(), // شاشة تسجيل الدخول
+        'signup': (context) => const SignupScreen(), // شاشة التسجيل
+        'tabscreen': (context) => TabsScreen(favoriteServices), // الشاشة الرئيسية مع الخدمات المفضلة
+        'auth': (context) => Auth(), // شاشة المصادقة
+        'addservice': (context) => AddService(), // شاشة إضافة خدمة جديدة
+        '/admin': (context) => AdminScreen(), // شاشة الإدارة
+        'categoriescreen': (context) => CategoryScreen(), // شاشة عرض التصنيفات
+        'generate_report': (ctx) => GenerateReportScreen(), // شاشة توليد التقارير
         CategoryServicesScreen.screenRoute:
-            (context) => CategoryServicesScreen(availableServices),
-        CategoryDetailScreen.screenRoute:
-            (context) => CategoryDetailScreen(manageFavorite, isFavorite),
+            (context) => CategoryServicesScreen(availableServices), // شاشة الخدمات بحسب التصنيف مع الخدمات المتاحة
+        // CategoryDetailScreen.screenRoute:
+            // (context) => CategoryDetailScreen(manageFavorite, isFavorite), // شاشة تفاصيل الخدمة (معلقة)
         FiltersScreen.screenRoute:
-            (context) => FiltersScreen(filters, changeFilters),
+            (context) => FiltersScreen(filters, changeFilters), // شاشة الفلاتر
       },
     );
   }
